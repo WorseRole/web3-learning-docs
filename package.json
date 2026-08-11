@@ -1,0 +1,30 @@
+{
+  "name": "web3-learning-docs",
+  "version": "1.0.0",
+  "description": "自律即自由 （ Discipline Equals Freedom！）",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WorseRole/web3-learning-docs.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/WorseRole/web3-learning-docs/issues"
+  },
+  "homepage": "https://github.com/WorseRole/web3-learning-docs#readme",
+  "devDependencies": {
+    "vitepress": "^1.6.4"
+  }
+}
