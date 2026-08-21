@@ -8,7 +8,7 @@ export default defineConfig({
   themeConfig: {
     nav: [
       { text: '首页', link: '/' },
-      { text: 'Web3', link: '/web3/web3' },
+      { text: 'Web3', link: '/web3/恢复基础，建立知识地图' },
       { text: 'DeFi', link: '/defi/' },
       { text: 'CEX', link: '/cex/' },
       { text: 'Projects', link: '/projects/' },
@@ -19,7 +19,7 @@ export default defineConfig({
         {
           text: 'Web3 基础',
           items: [
-            { text: 'Web3 知识地图', link: '/web3/web3' },
+            { text: '恢复基础，建立知识地图', link: '/web3/恢复基础，建立知识地图' },
           ]
         }
       ],

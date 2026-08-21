@@ -8,7 +8,7 @@ hero:
   actions:
     - theme: brand
       text: 开始阅读
-      link: /web3/web3
+      link: /web3/恢复基础，建立知识地图
     - theme: alt
       text: GitHub
       link: https://github.com/WorseRole/web3-learning-docs
@@ -16,7 +16,7 @@ hero:
 features:
   - title: Web3 基础
     details: EVM 原理、智能合约、代理模式、gas 优化、交易生命周期
-    link: /web3/web3
+    link: /web3/恢复基础，建立知识地图
   - title: DeFi
     details: DEX、AMM、借贷协议、流动性挖矿、MEV
     link: /defi/
