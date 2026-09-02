@@ -21,6 +21,7 @@ export default defineConfig({
           items: [
             { text: '恢复基础，建立知识地图', link: '/web3/恢复基础，建立知识地图' },
             { text: '恢复基础，建立知识地图 02', link: '/web3/恢复基础，建立知识地图02' },
+            { text: '恢复基础，建立知识地图 03', link: '/web3/恢复基础，建立知识地图03' },
           ]
         }
       ],
