@@ -47,6 +47,8 @@ export default defineConfig({
           text: 'Projects',
           items: [
             { text: '概览', link: '/projects/' },
+            { text: 'MetaNode 永续合约', link: '/projects/metanode-perpetual' },
+            { text: 'KinzaFinance 借贷', link: '/projects/kinza-lending' },
           ]
         }
       ],

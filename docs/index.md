@@ -24,7 +24,7 @@ features:
     details: 中心化交易所架构、撮合引擎、风控体系
     link: /cex/
   - title: Projects
-    details: 实战项目记录与复盘
+    details: MetaNode 永续合约 + KinzaFinance 借贷协议，实战项目记录
     link: /projects/
 ---
 
