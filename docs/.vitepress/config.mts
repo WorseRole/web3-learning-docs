@@ -12,6 +12,7 @@ export default defineConfig({
       { text: 'DeFi', link: '/defi/' },
       { text: 'CEX', link: '/cex/' },
       { text: 'Projects', link: '/projects/' },
+      { text: 'Foundry', link: '/foundry/' },
     ],
 
     sidebar: {
@@ -49,6 +50,15 @@ export default defineConfig({
             { text: '概览', link: '/projects/' },
             { text: 'MetaNode 永续合约', link: '/projects/metanode-perpetual' },
             { text: 'KinzaFinance 借贷', link: '/projects/kinza-lending' },
+          ]
+        }
+      ],
+      '/foundry/': [
+        {
+          text: 'Foundry 实操',
+          items: [
+            { text: '概览', link: '/foundry/' },
+            { text: '阶段 0 串讲', link: '/foundry/阶段0-串讲' },
           ]
         }
       ],

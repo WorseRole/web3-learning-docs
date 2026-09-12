@@ -8,6 +8,7 @@
 |------|------|--------|------|
 | [MetaNode 永续合约](./metanode-perpetual) | 链下撮合 + 链上结算 | Solidity / Go / Kafka / EIP-712 | 敲门砖项目 |
 | [KinzaFinance 借贷协议](./kinza-lending) | 多链借贷 + BTC 质押 | Solidity / Aave V3 / Chainlink | 深度项目 |
+| [Foundry 实操](/foundry/) | 合约热身 + 串讲 | Foundry / Sepolia | 手感恢复 |
 
 ## 简历一句话
 
