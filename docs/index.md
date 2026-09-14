@@ -26,5 +26,8 @@ features:
   - title: Projects
     details: MetaNode 永续合约 + KinzaFinance 借贷协议，实战项目记录
     link: /projects/
+  - title: Foundry 实操
+    details: 阶段 0 已完（20 tests）· 阶段 1 Sepolia 部署进行中
+    link: /foundry/
 ---
 
