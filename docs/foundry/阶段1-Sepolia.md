@@ -1,7 +1,7 @@
 # 阶段 1：Sepolia 部署（Day 6–10）
 
 > **目标**：合约真正上链，Etherscan 可查。  
-> **代码**：[FoundryStudy](https://github.com/WorseRole/FoundryStudy) · **当前**：Day 6 环境配置  
+> **代码**：[FoundryStudy](https://github.com/WorseRole/FoundryStudy) · **当前**：Day 7 部署 Counter  
 > **笔记对照**：[知识地图 01 · 交易生命周期](/web3/恢复基础，建立知识地图)
 
 ---
@@ -10,7 +10,7 @@
 
 | Day | 主题 | 状态 |
 |-----|------|------|
-| 6 | RPC / MetaMask / `.env` | ⬜ |
+| 6 | RPC / MetaMask / `.env` | ✅ 2026-09-15 |
 | 7 | 部署 Counter | ⬜ |
 | 8 | 部署 Vault + Etherscan 交互 | ⬜ |
 | 9 | 部署脚本整理 + README 部署记录 | ⬜ |
@@ -24,11 +24,11 @@
 
 > 代码仓逐步说明：[FoundryStudy · DAY6-环境配置.md](https://github.com/WorseRole/FoundryStudy/blob/main/DAY6-环境配置.md)（push 后链接生效）
 
-- [ ] [Alchemy](https://www.alchemy.com/) 或 Infura：Sepolia RPC URL
-- [ ] [MetaMask](https://metamask.io/)：Sepolia（Chain ID `11155111`）
-- [ ] 领 Sepolia ETH（≥ 0.05 ETH 即可）
-- [ ] `cp .env.example .env` 并填写三变量（**不要 commit**）
-- [ ] **验收**（在 FoundryStudy 根目录）：
+- [x] [Alchemy](https://www.alchemy.com/) 或 Infura：Sepolia RPC URL → `SEPOLIA_RPC_URL`
+- [x] [MetaMask](https://metamask.io/)：Sepolia（Chain ID `11155111`）
+- [x] 领 Sepolia ETH
+- [x] `.env` 三变量（**不要 commit**）
+- [x] **验收**（在 FoundryStudy 根目录）：
 
 ```bash
 forge test
@@ -37,7 +37,15 @@ forge script script/Counter.s.sol --rpc-url sepolia -vvv
 
 第二条应打印 `Counter deployed at: 0x...` 且 **不要** 加 `--broadcast`（Day 6 只模拟）。
 
-> 📝 **串讲待写**：RPC 是什么、私钥为什么只放本地、testnet 和 mainnet 区别（3–5 句）
+**三变量分工（详见 [DAY6 §0](https://github.com/WorseRole/FoundryStudy/blob/main/DAY6-环境配置.md#0-三个-env-变量各干什么foundry-怎么用)）**
+
+| 变量 | 作用 |
+|------|------|
+| `SEPOLIA_RPC_URL` | Alchemy：连 Sepolia，读状态 / 广播交易 |
+| `PRIVATE_KEY` | 测试钱包私钥：本地签名，与 MetaMask 同账户 |
+| `ETHERSCAN_API_KEY` | `--verify` 时提交源码；网页查交易不用 Key |
+
+> 📝 **串讲待写**：用自己的话复述上表 + testnet 与 mainnet 区别（3–5 句）
 
 ---
 
