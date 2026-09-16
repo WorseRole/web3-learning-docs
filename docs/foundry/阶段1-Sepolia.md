@@ -1,7 +1,7 @@
 # 阶段 1：Sepolia 部署（Day 6–10）
 
 > **目标**：合约真正上链，Etherscan 可查。  
-> **代码**：[FoundryStudy](https://github.com/WorseRole/FoundryStudy) · **当前**：Day 8 部署 Vault  
+> **代码**：[FoundryStudy](https://github.com/WorseRole/FoundryStudy) · **当前**：Day 9 流程文档化  
 > **笔记对照**：[知识地图 01 · 交易生命周期](/web3/恢复基础，建立知识地图)
 
 ---
@@ -12,8 +12,8 @@
 |-----|------|------|
 | 6 | RPC / MetaMask / `.env` | ✅ 2026-09-15 |
 | 7 | 部署 Counter | ✅ 2026-09-16 |
-| 8 | 部署 Vault + `deposit` / `balances` 验证 | **进行中** |
-| 9 | 部署脚本整理 + README 部署记录 | ⬜ |
+| 8 | 部署 Vault + `deposit` / `balances` 验证 | 部署 ✅ 2026-09-16 · deposit 可选补 |
+| 9 | 部署脚本整理 + README 部署记录 | ⬜ 进行中 |
 | 10 | 复盘 + 截图存档 | ⬜ |
 
 **完成标准**：独立完成一次 testnet 部署 + Etherscan 验证。
@@ -60,21 +60,21 @@ forge script script/Counter.s.sol --rpc-url sepolia -vvv
 
 ---
 
-## Day 8 — 部署 Vault（当前）
+## Day 8 — 部署 Vault（部署已完成）
 
-> **命令全集**：[Forge/Cast 链上命令](./forge-cast-链上命令)（部署 / 只读 / 写链上 / 辅助）  
-> **代码仓**：脚本需 **自己在 FoundryStudy 写** `script/Vault.s.sol`（结构对照 `Counter.s.sol`，`new Vault()`）。
+> **命令全集**：[Forge/Cast 链上命令](./forge-cast-链上命令)  
+> **Vault（Sepolia）**：[0x605edB790b07dA3809E61ba24fbd4a29b9ad3D32](https://sepolia.etherscan.io/address/0x605edB790b07dA3809E61ba24fbd4a29b9ad3D32)
 
 ### 进度
 
 | 步骤 | 内容 | 状态 |
 |------|------|------|
-| 8.1 | 编写 `script/Vault.s.sol` + `forge build` | ⬜ |
-| 8.2 | 模拟：`forge script script/Vault.s.sol --rpc-url sepolia -vvv` | ⬜ |
-| 8.3 | 上链：`--broadcast --verify`，记下 Vault 地址 | ⬜ |
-| 8.4 | `cast send` → `deposit()` + `--value 0.01ether` | ⬜ |
-| 8.5 | `cast call` → `balances(你的地址)` 与存入金额一致 | ⬜ |
-| 8.6 | 本页 + [FoundryStudy README](https://github.com/WorseRole/FoundryStudy)「部署记录」填 Vault | ⬜ |
+| 8.1 | 编写 `script/Vault.s.sol` + `forge build` | ✅ |
+| 8.2 | 模拟：`forge script script/Vault.s.sol --rpc-url sepolia -vvv` | ✅ |
+| 8.3 | 上链：`--broadcast --verify` | ✅ 2026-09-16 |
+| 8.4 | `cast send` → `deposit()` + `--value 0.01ether` | ⬜ 可选补 |
+| 8.5 | `cast call` → `balances(你的地址)` | ⬜ 可选补 |
+| 8.6 | 部署记录（本页 + README） | ✅ |
 
 ### 8.2 模拟（不上链）
 
@@ -93,7 +93,7 @@ forge script script/Vault.s.sol --rpc-url sepolia --broadcast --verify -vvvv
 ### 8.4–8.5 链上业务验证（与 Day 3 CEI 对应）
 
 ```bash
-VAULT=0x部署输出的地址
+VAULT=0x605edB790b07dA3809E61ba24fbd4a29b9ad3D32
 ME=$(cast wallet address --private-key "$PRIVATE_KEY")
 
 cast send $VAULT "deposit()" --value 0.01ether --rpc-url sepolia --private-key "$PRIVATE_KEY"
@@ -133,7 +133,7 @@ cast call $VAULT "balances(address)(uint256)" $ME --rpc-url sepolia
 | 合约 | 网络 | 地址 | 日期 | Etherscan |
 |------|------|------|------|-----------|
 | Counter | Sepolia | [0x00E60d96…Ad2A1c](https://sepolia.etherscan.io/address/0x00E60d96e3ccbe461700bEF3FC2B8b61EfAd2A1c) | 2026-09-16 | Verified |
-| Vault | Sepolia | | | |
+| Vault | Sepolia | [0x605edB79…ad3D32](https://sepolia.etherscan.io/address/0x605edB790b07dA3809E61ba24fbd4a29b9ad3D32) | 2026-09-16 | Verified |
 
 ---
 

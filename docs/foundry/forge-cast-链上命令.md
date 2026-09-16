@@ -40,7 +40,7 @@ cast call $COUNTER "number()(uint256)" --rpc-url sepolia
 查 **Vault** 某地址存款（`ME` 换成自己的 `0x`）：
 
 ```bash
-VAULT=0x你的Vault地址
+VAULT=0x605edB790b07dA3809E61ba24fbd4a29b9ad3D32
 cast call $VAULT "balances(address)(uint256)" $ME --rpc-url sepolia
 ```
 
@@ -102,6 +102,6 @@ forge test
 | 合约 | 地址 | Day |
 |------|------|-----|
 | Counter | [0x00E60d96…Ad2A1c](https://sepolia.etherscan.io/address/0x00E60d96e3ccbe461700bEF3FC2B8b61EfAd2A1c) | 7 ✅ |
-| Vault | _Day 8 部署后填写_ | 8 进行中 |
+| Vault | [0x605edB79…ad3D32](https://sepolia.etherscan.io/address/0x605edB790b07dA3809E61ba24fbd4a29b9ad3D32) | 8 部署 ✅ |
 
 Day 8 步骤清单见 [阶段 1 · Sepolia](./阶段1-Sepolia) 中 **Day 8** 小节。
