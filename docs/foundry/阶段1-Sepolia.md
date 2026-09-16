@@ -12,7 +12,7 @@
 |-----|------|------|
 | 6 | RPC / MetaMask / `.env` | ✅ 2026-09-15 |
 | 7 | 部署 Counter | ✅ 2026-09-16 |
-| 8 | 部署 Vault + `deposit` / `balances` 验证 | 部署 ✅ 2026-09-16 · deposit 可选补 |
+| 8 | 部署 Vault + `deposit` / `balances` 验证 | ✅ 2026-09-16 |
 | 9 | 部署脚本整理 + README 部署记录 | ⬜ 进行中 |
 | 10 | 复盘 + 截图存档 | ⬜ |
 
@@ -60,7 +60,7 @@ forge script script/Counter.s.sol --rpc-url sepolia -vvv
 
 ---
 
-## Day 8 — 部署 Vault（部署已完成）
+## Day 8 — 部署 Vault ✅
 
 > **命令全集**：[Forge/Cast 链上命令](./forge-cast-链上命令)  
 > **Vault（Sepolia）**：[0x605edB790b07dA3809E61ba24fbd4a29b9ad3D32](https://sepolia.etherscan.io/address/0x605edB790b07dA3809E61ba24fbd4a29b9ad3D32)
@@ -72,9 +72,19 @@ forge script script/Counter.s.sol --rpc-url sepolia -vvv
 | 8.1 | 编写 `script/Vault.s.sol` + `forge build` | ✅ |
 | 8.2 | 模拟：`forge script script/Vault.s.sol --rpc-url sepolia -vvv` | ✅ |
 | 8.3 | 上链：`--broadcast --verify` | ✅ 2026-09-16 |
-| 8.4 | `cast send` → `deposit()` + `--value 0.01ether` | ⬜ 可选补 |
-| 8.5 | `cast call` → `balances(你的地址)` | ⬜ 可选补 |
+| 8.4 | `cast send` → `deposit()` + `--value 0.01ether` | ✅ |
+| 8.5 | `cast call` → `balances(你的地址)` | ✅ |
 | 8.6 | 部署记录（本页 + README） | ✅ |
+
+### 实战小结（Day 7–8 链上交互）
+
+用 **`.env` 里同一测试地址 + 私钥**（与 MetaMask Sepolia 账户一致）：
+
+1. **`forge script --broadcast`**：部署 Counter / Vault（创建合约 tx，合约页 Transactions 最初可能为空）。  
+2. **`cast send`**：对已有合约发 **写交易**（如 Counter `increment()`、Vault `deposit()` 带 `--value`）；Etherscan **Transactions** 可见 Method、tx hash。  
+3. **`cast call`**：只读 storage（如 `number`、`balances`），不上链、不 gas；Etherscan **Read Contract** 同理。  
+
+私钥只在本地签名，经 **Alchemy RPC** 广播；链上 **From** 为你的 `0xE412…6BeE`。
 
 ### 8.2 模拟（不上链）
 

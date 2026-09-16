@@ -2,6 +2,8 @@
 
 > 环境：FoundryStudy 根目录 · `set -a && source .env && set +a` · RPC 用 `foundry.toml` 别名 **`sepolia`**
 
+**一条链路（Day 7–8 已练）**：本地 **私钥** 签名 → **`cast send` / `forge script --broadcast`** → **Sepolia RPC** 广播 → Etherscan 查 **tx / Read Contract**；读状态用 **`cast call`**（不发交易）。
+
 ---
 
 ## 1. 部署（`forge script`，上链）
@@ -102,6 +104,6 @@ forge test
 | 合约 | 地址 | Day |
 |------|------|-----|
 | Counter | [0x00E60d96…Ad2A1c](https://sepolia.etherscan.io/address/0x00E60d96e3ccbe461700bEF3FC2B8b61EfAd2A1c) | 7 ✅ |
-| Vault | [0x605edB79…ad3D32](https://sepolia.etherscan.io/address/0x605edB790b07dA3809E61ba24fbd4a29b9ad3D32) | 8 部署 ✅ |
+| Vault | [0x605edB79…ad3D32](https://sepolia.etherscan.io/address/0x605edB790b07dA3809E61ba24fbd4a29b9ad3D32) | 8 ✅ 含 deposit |
 
 Day 8 步骤清单见 [阶段 1 · Sepolia](./阶段1-Sepolia) 中 **Day 8** 小节。
