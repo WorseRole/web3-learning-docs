@@ -1,7 +1,7 @@
 # 阶段 1：Sepolia 部署（Day 6–10）
 
 > **目标**：合约真正上链，Etherscan 可查。  
-> **代码**：[FoundryStudy](https://github.com/WorseRole/FoundryStudy) · **当前**：Day 7 部署 Counter  
+> **代码**：[FoundryStudy](https://github.com/WorseRole/FoundryStudy) · **当前**：Day 8 部署 Vault  
 > **笔记对照**：[知识地图 01 · 交易生命周期](/web3/恢复基础，建立知识地图)
 
 ---
@@ -11,7 +11,7 @@
 | Day | 主题 | 状态 |
 |-----|------|------|
 | 6 | RPC / MetaMask / `.env` | ✅ 2026-09-15 |
-| 7 | 部署 Counter | ⬜ |
+| 7 | 部署 Counter | ✅ 2026-09-16 |
 | 8 | 部署 Vault + Etherscan 交互 | ⬜ |
 | 9 | 部署脚本整理 + README 部署记录 | ⬜ |
 | 10 | 复盘 + 截图存档 | ⬜ |
@@ -49,12 +49,11 @@ forge script script/Counter.s.sol --rpc-url sepolia -vvv
 
 ---
 
-## Day 7 — 部署 Counter
+## Day 7 — 部署 Counter ✅
 
-- [ ] 完善 `script/Counter.s.sol`
-- [ ] 模拟：`forge script script/Counter.s.sol --rpc-url $SEPOLIA_RPC_URL`
-- [ ] 广播 + 验证：`forge script ... --broadcast --verify`
-- [ ] 合约地址记入下方「部署记录」
+- [x] `script/Counter.s.sol` 部署脚本
+- [x] 模拟 + `--broadcast --verify`（Sepolia）
+- [x] 部署记录见下表 · [Etherscan Verified](https://sepolia.etherscan.io/address/0x00E60d96e3ccbe461700bEF3FC2B8b61EfAd2A1c)
 
 > 📝 **串讲待写**：`forge script` → `--broadcast` → `--verify` 各步在干什么
 
@@ -91,7 +90,7 @@ forge script script/Counter.s.sol --rpc-url sepolia -vvv
 
 | 合约 | 网络 | 地址 | 日期 | Etherscan |
 |------|------|------|------|-----------|
-| Counter | Sepolia | | | |
+| Counter | Sepolia | [0x00E60d96…Ad2A1c](https://sepolia.etherscan.io/address/0x00E60d96e3ccbe461700bEF3FC2B8b61EfAd2A1c) | 2026-09-16 | Verified |
 | Vault | Sepolia | | | |
 
 ---
