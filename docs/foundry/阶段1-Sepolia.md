@@ -12,7 +12,7 @@
 |-----|------|------|
 | 6 | RPC / MetaMask / `.env` | ✅ 2026-09-15 |
 | 7 | 部署 Counter | ✅ 2026-09-16 |
-| 8 | 部署 Vault + Etherscan 交互 | ⬜ |
+| 8 | 部署 Vault + `deposit` / `balances` 验证 | **进行中** |
 | 9 | 部署脚本整理 + README 部署记录 | ⬜ |
 | 10 | 复盘 + 截图存档 | ⬜ |
 
@@ -54,25 +54,67 @@ forge script script/Counter.s.sol --rpc-url sepolia -vvv
 - [x] `script/Counter.s.sol` 部署脚本
 - [x] 模拟 + `--broadcast --verify`（Sepolia）
 - [x] 部署记录见下表 · [Etherscan Verified](https://sepolia.etherscan.io/address/0x00E60d96e3ccbe461700bEF3FC2B8b61EfAd2A1c)
+- [x] （加练）`cast send` 调 `increment()` · tx [`0x5f3f6a93…2ebb`](https://sepolia.etherscan.io/tx/0x5f3f6a9389521a385a37b8d761bcf56568b0ddfd9413ea00b0e3f46547c42ebb)；`cast call` / Read Contract 读 `number`
 
 > 📝 **串讲待写**：`forge script` → `--broadcast` → `--verify` 各步在干什么
 
 ---
 
-## Day 8 — 部署 Vault
+## Day 8 — 部署 Vault（当前）
 
-- [ ] 写 `script/Vault.s.sol`
-- [ ] 部署 Vault 到 Sepolia
-- [ ] Etherscan 上手动 `deposit()`（例如 0.01 ETH）
-- [ ] Etherscan 读 `balances(yourAddress)`
+> **命令全集**：[Forge/Cast 链上命令](./forge-cast-链上命令)（部署 / 只读 / 写链上 / 辅助）  
+> **代码仓**：脚本需 **自己在 FoundryStudy 写** `script/Vault.s.sol`（结构对照 `Counter.s.sol`，`new Vault()`）。
+
+### 进度
+
+| 步骤 | 内容 | 状态 |
+|------|------|------|
+| 8.1 | 编写 `script/Vault.s.sol` + `forge build` | ⬜ |
+| 8.2 | 模拟：`forge script script/Vault.s.sol --rpc-url sepolia -vvv` | ⬜ |
+| 8.3 | 上链：`--broadcast --verify`，记下 Vault 地址 | ⬜ |
+| 8.4 | `cast send` → `deposit()` + `--value 0.01ether` | ⬜ |
+| 8.5 | `cast call` → `balances(你的地址)` 与存入金额一致 | ⬜ |
+| 8.6 | 本页 + [FoundryStudy README](https://github.com/WorseRole/FoundryStudy)「部署记录」填 Vault | ⬜ |
+
+### 8.2 模拟（不上链）
+
+```bash
+cd FoundryStudy
+set -a && source .env && set +a
+forge script script/Vault.s.sol --rpc-url sepolia -vvv
+```
+
+### 8.3 部署 + 验证
+
+```bash
+forge script script/Vault.s.sol --rpc-url sepolia --broadcast --verify -vvvv
+```
+
+### 8.4–8.5 链上业务验证（与 Day 3 CEI 对应）
+
+```bash
+VAULT=0x部署输出的地址
+ME=$(cast wallet address --private-key "$PRIVATE_KEY")
+
+cast send $VAULT "deposit()" --value 0.01ether --rpc-url sepolia --private-key "$PRIVATE_KEY"
+cast call $VAULT "balances(address)(uint256)" $ME --rpc-url sepolia
+```
+
+可选：Etherscan **Contract → Write `deposit`（带 Value）→ Read `balances`**。
+
+**Day 8 完成标准**：Sepolia 上 Vault **Verified**，且 `balances` 读出你存入的测试 ETH。
+
+> 📝 **串讲待写**：Vault 部署 vs Counter 有何相同；`deposit` 为何必须带 `msg.value` / `--value`
 
 ---
 
 ## Day 9 — 流程文档化
 
+> 前置：Day 8 Vault 部署记录已填。
+
 - [ ] 整理 deploy 流程（可选 `DeployAll.s.sol`）
-- [ ] [FoundryStudy README](https://github.com/WorseRole/FoundryStudy) 补「部署记录」表
-- [ ] 本页下方「部署记录」与 README 保持一致
+- [ ] Counter + Vault 部署命令写进 README / 或链到 [Forge/Cast 链上命令](./forge-cast-链上命令)
+- [ ] 本页「部署记录」与 FoundryStudy README 保持一致
 
 ---
 

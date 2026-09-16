@@ -32,6 +32,7 @@ forge test    # 当前目标：20 passed
 |------|------|
 | [阶段 0 串讲](./阶段0-串讲) | Day 1–5：Counter → Ownable → Vault → 重入（口语稿，含 📝 待填） |
 | [阶段 1 · Sepolia](./阶段1-Sepolia) | Day 6–10：环境、部署、Etherscan（checklist） |
+| [Forge/Cast 链上命令](./forge-cast-链上命令) | 部署 / `cast call` / `cast send` 备忘 |
 
 后续阶段完成后可在此追加：
 

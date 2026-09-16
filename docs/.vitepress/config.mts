@@ -60,6 +60,7 @@ export default defineConfig({
             { text: '概览', link: '/foundry/' },
             { text: '阶段 0 串讲', link: '/foundry/阶段0-串讲' },
             { text: '阶段 1 · Sepolia', link: '/foundry/阶段1-Sepolia' },
+            { text: 'Forge/Cast 链上命令', link: '/foundry/forge-cast-链上命令' },
           ]
         }
       ],
