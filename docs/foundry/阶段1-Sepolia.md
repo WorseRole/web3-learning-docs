@@ -14,7 +14,7 @@
 | 7 | 部署 Counter | ✅ 2026-09-16 |
 | 8 | 部署 Vault + `deposit` / `balances` 验证 | ✅ 2026-09-16 |
 | 9 | 部署流程文档化 | ✅ 见 [Sepolia 部署流程](./Sepolia-部署流程) |
-| 10 | 复盘 + 截图存档 | ⬜ |
+| 10 | 串讲 + 对照知识地图 01 | ⬜ |
 
 **完成标准**：独立完成一次 testnet 部署 + Etherscan 验证。
 
@@ -130,13 +130,27 @@ cast call $VAULT "balances(address)(uint256)" $ME --rpc-url sepolia
 
 ---
 
-## Day 10 — 复盘
+## Day 10 — 阶段复盘（无截图）
 
-- [ ] Counter + Vault 在 Sepolia 可查、可交互
-- [ ] Etherscan 截图存档（简历/面试用）
-- [ ] 对照知识地图：calldata、nonce、gas、交易生命周期
+> **链上命令**：[Forge/Cast 链上命令](./forge-cast-链上命令)（部署、`cast send`、`cast call` 已覆盖 Counter/Vault 交互，不必另做 Etherscan 操作清单）。
 
-> 📝 **阶段 1 串讲**（完成后新建 `阶段1-串讲.md` 或在本节写 1 分钟总览）
+- [ ] **可查、可交互**：部署记录见下表；需要时按知识库命令即可
+- [ ] **阅读** [知识地图 01 · §9–15 交易生命周期](/web3/恢复基础，建立知识地图)（calldata、签名、RPC、**nonce**、gas、Receipt / State）
+- [ ] **串讲 1～2 分钟**（录音或打字），建议覆盖：
+  1. 生命周期总句：签名 → RPC → Mempool → 出块 → EVM → State / Receipt  
+  2. **calldata**：`cast send` 调函数 vs `forge script` 部署合约  
+  3. **From / nonce**：你的 EOA（如 `0xE412…`）；Etherscan tx **Other Attributes → Nonce**；`cast nonce <地址> --rpc-url sepolia`  
+  4. **gas**：部署 / `increment` / `withdraw` 回执里的 `gasUsed`；`cast call` 不上链  
+  5. **State**：Counter `number`、Vault `balances`  
+- [ ] （可选）在本节下方或新建 `阶段1-串讲.md` 粘贴定稿
+
+### 串讲提纲（30 秒极简，可扩写）
+
+> 我用 Foundry 在 Sepolia 部署 Counter 和 Vault（`forge script --broadcast`），再用 `cast send` 调 `increment`、`deposit`/`withdraw`；私钥本地签名，经 Alchemy RPC 广播；节点校验 nonce、余额、签名后打包，EVM 执行 calldata，改 Storage，付 gas；只读用 `cast call`。
+
+> 📝 **你的串讲稿（待粘贴）**  
+>  
+>  
 
 ---
 
