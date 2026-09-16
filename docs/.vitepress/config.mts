@@ -63,6 +63,7 @@ export default defineConfig({
             { text: '阶段 1 串讲', link: '/foundry/阶段1-串讲' },
             { text: 'Sepolia 部署流程', link: '/foundry/Sepolia-部署流程' },
             { text: 'Forge/Cast 链上命令', link: '/foundry/forge-cast-链上命令' },
+            { text: '阶段 2 · Day 11 Proxy', link: '/foundry/阶段2-Day11-Proxy原理' },
           ]
         }
       ],

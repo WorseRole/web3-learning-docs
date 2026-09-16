@@ -19,7 +19,7 @@ forge test    # 当前目标：20 passed
 |------|------|------|------|
 | 0 | Day 1-5 | Foundry 热身 | ✅ |
 | 1 | Day 6-10 | Sepolia 部署 | ✅ |
-| 2 | Day 11-15 | Proxy 升级 | ⬜ |
+| 2 | Day 11-15 | Proxy 升级 | 🔄 Day 11 ✅ |
 | 3 | Day 16-21 | 永续 + Kinza 深入 | ⬜ |
 | 4 | Day 22-26 | 面试准备 | ⬜ |
 | 5 | Day 27-30 | 简历 + 投递 | ⬜ |
@@ -36,8 +36,9 @@ forge test    # 当前目标：20 passed
 | [Forge/Cast 链上命令](./forge-cast-链上命令) | 部署 / `cast call` / `cast send` 备忘 |
 
 | [阶段 1 串讲](./阶段1-串讲) | Day 10：交易生命周期 + Sepolia 实践 |
+| [阶段 2 · Day 11 Proxy](./阶段2-Day11-Proxy原理) | delegatecall、UUPS vs Transparent、自测三题 |
 
-后续：`阶段2-升级串讲.md`（Day 11–15）
+后续：`阶段2-升级串讲.md`（Day 15 复盘）
 
 ## 与知识地图的对应
 
