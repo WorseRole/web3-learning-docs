@@ -18,7 +18,7 @@ forge test    # 当前目标：20 passed
 | 阶段 | 天数 | 内容 | 状态 |
 |------|------|------|------|
 | 0 | Day 1-5 | Foundry 热身 | ✅ |
-| 1 | Day 6-10 | Sepolia 部署 | **进行中（Day 10）** |
+| 1 | Day 6-10 | Sepolia 部署 | ✅ |
 | 2 | Day 11-15 | Proxy 升级 | ⬜ |
 | 3 | Day 16-21 | 永续 + Kinza 深入 | ⬜ |
 | 4 | Day 22-26 | 面试准备 | ⬜ |
@@ -35,10 +35,9 @@ forge test    # 当前目标：20 passed
 | [Sepolia 部署流程](./Sepolia-部署流程) | 合约 → script → forge 上链（Day 9） |
 | [Forge/Cast 链上命令](./forge-cast-链上命令) | 部署 / `cast call` / `cast send` 备忘 |
 
-后续阶段完成后可在此追加：
+| [阶段 1 串讲](./阶段1-串讲) | Day 10：交易生命周期 + Sepolia 实践 |
 
-- `阶段1-串讲.md`（Day 6–10 口语复盘，阶段 1 做完再写）
-- `阶段2-升级串讲.md`（Day 11–15）
+后续：`阶段2-升级串讲.md`（Day 11–15）
 
 ## 与知识地图的对应
 
