@@ -18,7 +18,7 @@ forge test    # 当前目标：20 passed
 | 阶段 | 天数 | 内容 | 状态 |
 |------|------|------|------|
 | 0 | Day 1-5 | Foundry 热身 | ✅ |
-| 1 | Day 6-10 | Sepolia 部署 | **进行中（Day 9）** |
+| 1 | Day 6-10 | Sepolia 部署 | **进行中（Day 10）** |
 | 2 | Day 11-15 | Proxy 升级 | ⬜ |
 | 3 | Day 16-21 | 永续 + Kinza 深入 | ⬜ |
 | 4 | Day 22-26 | 面试准备 | ⬜ |
@@ -32,6 +32,7 @@ forge test    # 当前目标：20 passed
 |------|------|
 | [阶段 0 串讲](./阶段0-串讲) | Day 1–5：Counter → Ownable → Vault → 重入（口语稿，含 📝 待填） |
 | [阶段 1 · Sepolia](./阶段1-Sepolia) | Day 6–10：环境、部署、Etherscan（checklist） |
+| [Sepolia 部署流程](./Sepolia-部署流程) | 合约 → script → forge 上链（Day 9） |
 | [Forge/Cast 链上命令](./forge-cast-链上命令) | 部署 / `cast call` / `cast send` 备忘 |
 
 后续阶段完成后可在此追加：

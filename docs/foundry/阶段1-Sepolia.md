@@ -1,7 +1,7 @@
 # 阶段 1：Sepolia 部署（Day 6–10）
 
 > **目标**：合约真正上链，Etherscan 可查。  
-> **代码**：[FoundryStudy](https://github.com/WorseRole/FoundryStudy) · **当前**：Day 9 流程文档化  
+> **代码**：[FoundryStudy](https://github.com/WorseRole/FoundryStudy) · **当前**：Day 10 阶段复盘  
 > **笔记对照**：[知识地图 01 · 交易生命周期](/web3/恢复基础，建立知识地图)
 
 ---
@@ -13,7 +13,7 @@
 | 6 | RPC / MetaMask / `.env` | ✅ 2026-09-15 |
 | 7 | 部署 Counter | ✅ 2026-09-16 |
 | 8 | 部署 Vault + `deposit` / `balances` 验证 | ✅ 2026-09-16 |
-| 9 | 部署脚本整理 + README 部署记录 | ⬜ 进行中 |
+| 9 | 部署流程文档化 | ✅ 见 [Sepolia 部署流程](./Sepolia-部署流程) |
 | 10 | 复盘 + 截图存档 | ⬜ |
 
 **完成标准**：独立完成一次 testnet 部署 + Etherscan 验证。
@@ -118,13 +118,15 @@ cast call $VAULT "balances(address)(uint256)" $ME --rpc-url sepolia
 
 ---
 
-## Day 9 — 流程文档化
+## Day 9 — 流程文档化 ✅
 
-> 前置：Day 8 Vault 部署记录已填。
+> **定稿**：[Sepolia 部署流程](./Sepolia-部署流程)（与 FoundryStudy `DEPLOY-流程.md` 一致）
 
-- [ ] 整理 deploy 流程（可选 `DeployAll.s.sol`）
-- [ ] Counter + Vault 部署命令写进 README / 或链到 [Forge/Cast 链上命令](./forge-cast-链上命令)
-- [ ] 本页「部署记录」与 FoundryStudy README 保持一致
+- [x] 合约 → test → script（`console.log` 地址）→ 模拟 → `--broadcast --verify`
+- [x] 命令备忘：[Forge/Cast 链上命令](./forge-cast-链上命令)
+- [x] 部署记录与 [FoundryStudy README](https://github.com/WorseRole/FoundryStudy#部署记录) 一致
+- [ ] （可选）`DeployAll.s.sol` 仅模拟
+- [ ] 口头串讲 1 分钟
 
 ---
 

@@ -2,7 +2,9 @@
 
 > 环境：FoundryStudy 根目录 · `set -a && source .env && set +a` · RPC 用 `foundry.toml` 别名 **`sepolia`**
 
-**一条链路（Day 7–8 已练）**：本地 **私钥** 签名 → **`cast send` / `forge script --broadcast`** → **Sepolia RPC** 广播 → Etherscan 查 **tx / Read Contract**；读状态用 **`cast call`**（不发交易）。
+**部署流程（Day 9）**：见 [Sepolia 部署流程](./Sepolia-部署流程)（合约 → script → `forge script --broadcast`）。
+
+**调用链路（Day 7–8 已练）**：本地 **私钥** → **`cast send` / `forge script --broadcast`** → **Sepolia RPC** → Etherscan；读状态用 **`cast call`**。
 
 ---
 
