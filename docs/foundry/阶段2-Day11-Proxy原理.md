@@ -98,16 +98,62 @@ Proxy 上的数据已按 V1 的 **slot 布局** 写入。V2 必须 **兼容同�
 
 ---
 
-## 7. 30 秒极简版（面试自测）
+## 7. 业务项目：`perpetual-contract` 里的 Proxy 设计
+
+> 代码路径（本地）：`~/Desktop/personal/liyanyan/perpetual-contract`  
+> 相关文件：`src/subaccount/SubaccountFactory.sol`、`src/subaccount/Subaccount.sol`、`script/deployFactory.s.sol`
+
+### 7.1 先澄清：主业务 **不是** UUPS 升级
+
+| 合约 | 部署方式 | 是否可升级 |
+|------|----------|------------|
+| `MetaNodeDealer` / `Perpetual` | `new` 直接部署（见 `deployPerpetual.s.sol`） | 否；改逻辑 = 新部署 + 迁移 |
+| **子账户** | **EIP-1167 最小代理（Clone）** | 否；省 gas、批量造地址 |
+
+Dealer 用 **继承拆分**（`MetaNodeStorage` + External / Operation / View），是代码组织，**不是** Proxy 升级模式。
+
+### 7.2 Subaccount：Clone = 另一种 Proxy
+
+```text
+Factory 部署一次 Subaccount 作为 template（implementation）
+用户 newSubaccount() → Clones.clone(template) → 每个子账户一个独立地址
+Clone 收到调用 → 内部 delegatecall → 跑 template 的 bytecode
+owner / initialized 等状态存在「这个 Clone 地址」的 storage，不在 template 上
+```
+
+与 Day 11 的 **UUPS** 对比：
+
+| | UUPS（Counter 阶段 2） | EIP-1167 Clone（Subaccount） |
+|--|------------------------|------------------------------|
+| 目的 | **同一地址** 换逻辑版本 | **同一逻辑** 廉价复制很多实例 |
+| 用户认的地址 | 一个 Proxy | 每个子账户一个 Clone 地址 |
+| 换 implementation | `upgradeTo` 改 ERC1967 slot | **不支持**；template 在 Factory 里 `immutable` |
+| 初始化 | `initialize` / `upgradeToAndCall` | **`init(owner)`**，因 Clone 不能带 constructor 参数 |
+
+Factory 里对 template 调 `init(address(this))`，避免有人直接拿 template 当子账户用。
+
+### 7.3 和 delegatecall 的同一句话
+
+**Clone 和 UUPS Proxy 都靠 delegatecall：逻辑共享一份 bytecode，状态落在「被调用的那个合约地址」上。**  
+区别是 MetaNode 子账户要 **多地址、低部署成本**；Counter 升级要 **单地址、换版本**。
+
+### 7.4 面试可补一句
+
+「我们项目里 Perpetual/Dealer 是直接部署；子账户用 OZ `Clones` 做 EIP-1167，和 ERC1967 可升级 Proxy 是同一套 delegatecall 思想，场景不同。」
+
+---
+
+## 8. 30 秒极简版（面试自测）
 
 Proxy 用 **delegatecall** 跑 Implementation 的代码，但 **state 在 Proxy 的 slot** 里。升级只换 **implementation 地址**，Proxy 地址和 storage 不变。V2 必须 **storage 布局兼容** V1。我们后面用 **UUPS**：升级写在实现合约里，Proxy 只负责转发；Transparent 则是 Admin 在 Proxy 层改指针、用户才 delegatecall。
 
 ---
 
-## 8. Day 11 Checklist
+## 9. Day 11 Checklist
 
 - [x] 读知识地图 01：Delegatecall、Proxy、Storage Layout
-- [ ] 可选：扫一眼业务项目里的 Proxy 设计 / [OZ Upgradeable 文档](https://docs.openzeppelin.com/contracts/4.x/upgradeable)
+- [x] 读 `perpetual-contract`：Subaccount **EIP-1167 Clone**（§7）
+- [ ] 可选：[OZ Upgradeable 文档](https://docs.openzeppelin.com/contracts/4.x/upgradeable)（Day 13 前扫一眼即可）
 - [x] 能口头答上面三题
 
 **下一步（Day 12）**：自写 `CounterV1` / `CounterV2`（layout 兼容，只加 `reset()` 或 `version()`）。
