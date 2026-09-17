@@ -64,6 +64,7 @@ export default defineConfig({
             { text: 'Sepolia 部署流程', link: '/foundry/Sepolia-部署流程' },
             { text: 'Forge/Cast 链上命令', link: '/foundry/forge-cast-链上命令' },
             { text: '阶段 2 · Day 11 Proxy', link: '/foundry/阶段2-Day11-Proxy原理' },
+            { text: '阶段 2 · Day 12 V1/V2', link: '/foundry/阶段2-Day12-CounterV1V2' },
           ]
         }
       ],
