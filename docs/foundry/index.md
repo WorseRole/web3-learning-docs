@@ -10,7 +10,7 @@
 
 ```bash
 cd FoundryStudy
-forge test    # 当前目标：30 passed
+forge test    # 当前目标：32 passed
 ```
 
 ## 学习路线（30 天）
@@ -19,7 +19,7 @@ forge test    # 当前目标：30 passed
 |------|------|------|------|
 | 0 | Day 1-5 | Foundry 热身 | ✅ |
 | 1 | Day 6-10 | Sepolia 部署 | ✅ |
-| 2 | Day 11-15 | Proxy 升级 | 🔄 Day 12 ✅ |
+| 2 | Day 11-15 | Proxy 升级 | 🔄 Day 13 ✅ |
 | 3 | Day 16-21 | 永续 + Kinza 深入 | ⬜ |
 | 4 | Day 22-26 | 面试准备 | ⬜ |
 | 5 | Day 27-30 | 简历 + 投递 | ⬜ |
@@ -38,6 +38,7 @@ forge test    # 当前目标：30 passed
 | [阶段 1 串讲](./阶段1-串讲) | Day 10：交易生命周期 + Sepolia 实践 |
 | [阶段 2 · Day 11 Proxy](./阶段2-Day11-Proxy原理) | delegatecall、UUPS vs Transparent、自测三题 |
 | [阶段 2 · Day 12 V1/V2](./阶段2-Day12-CounterV1V2) | layout、CounterUpgrade 测试 |
+| [阶段 2 · Day 13 UUPS](./阶段2-Day13-UUPS-Proxy) | ERC1967Proxy、initialize、四 API |
 
 后续：`阶段2-升级串讲.md`（Day 15 复盘）
 
