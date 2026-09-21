@@ -67,6 +67,7 @@ export default defineConfig({
             { text: '阶段 2 · Day 12 V1/V2', link: '/foundry/阶段2-Day12-CounterV1V2' },
             { text: '阶段 2 · Day 13 UUPS', link: '/foundry/阶段2-Day13-UUPS-Proxy' },
             { text: '阶段 2 · Day 14 升级', link: '/foundry/阶段2-Day14-升级Sepolia' },
+            { text: '阶段 2 串讲', link: '/foundry/阶段2-串讲' },
           ]
         }
       ],
