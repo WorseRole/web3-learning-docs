@@ -1,0 +1,39 @@
+sequenceDiagram
+    autonumber
+    participant User as 用户
+    participant Sender as orderSender
+    participant Perp as Perpetual
+    participant Dealer as MetaNodeDealer
+    participant Trading as Trading库
+    participant Liq as Liquidation库
+
+    Note over User,Dealer: 事前 User deposit 到 primaryCredit
+
+    User->>User: EIP-712 签 Order
+    Note over Sender,Perp: 链下撮合后 orderSender 发 tx
+
+    Sender->>Perp: trade(tradeData)
+    Perp->>Dealer: approveTrade
+    Dealer->>Dealer: 解码并验签每个 Order
+    Dealer->>Trading: _matchOrders
+    Trading-->>Dealer: paper/credit 变化量
+    Dealer-->>Perp: traderList
+
+    loop 每个 trader
+        Perp->>Perp: _settle
+    end
+    Perp->>Dealer: isAllSafe
+
+    Note over User,Liq: 清算 不走订单簿
+
+    participant Liqtor as 清算人
+    Liqtor->>Perp: liquidate
+    Perp->>Dealer: requestLiquidation
+    Perp->>Perp: _settle x2
+    Perp->>Dealer: isSafe 与 handleBadDebt
+
+    Note over Dealer,Perp: Funding 周期 keeper
+
+    participant Keeper as fundingRateKeeper
+    Keeper->>Dealer: updateFundingRate
+    Dealer->>Perp: updateFundingRate

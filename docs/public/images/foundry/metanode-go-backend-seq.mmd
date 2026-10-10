@@ -1,0 +1,37 @@
+sequenceDiagram
+    autonumber
+    participant User as 用户钱包
+    participant Order as order服务
+    participant KNew as Kafka orders.new
+    participant KCancel as Kafka orders.cancel
+    participant Match as matching引擎
+    participant WAL as WAL
+    participant Book as 订单簿
+    participant KFill as Kafka fills.pending
+    participant Exec as execution
+    participant Geth as go-ethereum
+    participant Perp as Perpetual
+    participant Dealer as Dealer
+    participant KDone as Kafka fills.confirmed
+
+    User->>Order: POST order + Signature
+    Order->>Order: Verify EIP-712 + 过期检查
+    Order->>KNew: MsgNewOrder
+
+    Note over Match: Recover WAL
+
+    KNew->>Match: consume
+    Match->>WAL: Append Order
+    Match->>Book: Match taker
+    Match->>KFill: MsgPendingFill
+    Match->>Book: 剩余挂单
+
+    KCancel->>Match: Cancel
+    Match->>WAL: Append Cancel
+
+    KFill->>Exec: consume
+    Exec->>Geth: Trade executor密钥
+    Geth->>Perp: trade
+    Perp->>Dealer: approveTrade
+    Geth-->>Exec: receipt
+    Exec->>KDone: FillResult
