@@ -20,7 +20,7 @@ forge test    # 当前目标：34 passed
 | 0 | Day 1-5 | Foundry 热身 | ✅ |
 | 1 | Day 6-10 | Sepolia 部署 | ✅ |
 | 2 | Day 11-15 | Proxy 升级 | ✅ |
-| 3 | Day 16-21 | 永续 + Kinza 深入 | ⬜ [国庆一页纸打印](/interview/国庆面试一页纸) |
+| 3 | Day 16-21 | 永续 + Kinza 深入 | 🟡 [合约实操恢复计划](./合约实操恢复计划) · [国庆一页纸](/interview/国庆面试一页纸) |
 | 4 | Day 22-26 | 面试准备 | ⬜ |
 | 5 | Day 27-30 | 简历 + 投递 | ⬜ |
 
@@ -42,7 +42,9 @@ forge test    # 当前目标：34 passed
 | [阶段 2 · Day 14 升级](./阶段2-Day14-升级Sepolia) | upgradeToAndCall、Sepolia 地址 |
 | [阶段 2 串讲](./阶段2-串讲) | Day 15：口播稿 + Sepolia + 风险 |
 
-后续：阶段 3 · Day 16 MetaNode
+| [合约实操恢复计划 · 永续链上+后端](./合约实操恢复计划) | 阶段 3：时序图 + 2min 口播 + 阅读清单 |
+
+后续：阶段 3 · Kinza
 
 ## 与知识地图的对应
 

@@ -127,6 +127,10 @@ credit = paper × fundingRate + reducedCredit
 
 > 净值 < 维持保证金时触发。清算人调 `liquidate()`，按固定折扣价强制转让仓位，清算人拿奖励，资不抵债进保险基金。
 
+## 串讲（链上 + 后端）
+
+**完整时序图、公式、2 分钟口播稿：** [合约实操恢复计划 · MetaNode 永续](/foundry/合约实操恢复计划)
+
 ## 学习清单
 
 - [ ] 读 `perpetual-new-contract/src/libraries/Trading.sol`，理解 `_matchOrders`
