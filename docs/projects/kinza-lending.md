@@ -192,6 +192,82 @@ Solidity 0.8.10 · Hardhat · Foundry · Chainlink Oracle · The Graph · LayerZ
 
 > LTV 决定能借多少（借款上限），清算阈值决定多危险会被清算（安全线）。LTV < liquidationThreshold，中间差值是缓冲带。HF 用的是 liquidationThreshold，不是 LTV。
 
+---
+
+## Day 18 · 宏观 + 清算（2026-10-15）
+
+> **本地 monorepo**：`~/Desktop/personal/liyanyan/KinzaFinance` · 合约深挖 **`KZA-lending/`**（与文档中的 `KZA-lending` 同仓）。
+
+### 用户路径（宏观）
+
+| 路径 | 用户做什么 | 系统做什么 |
+|------|------------|------------|
+| **只存不借** | `Pool.supply` → 拿 **aToken**（如 aUSDC） | underlying 进池；**liquidityIndex** 计息（**浮动存款利率**，非「稳定存息」） |
+| **抵押 + 借款** | 某资产 aToken **标为 collateral** → `borrow` 其他/同资产 | `updateState` → **可借额度（avgLTV）** + **借后 HF≥1** → mint **债务 token**，池子转出 underlying |
+| **退出** | `repay` / `withdraw` | burn 债务 / aToken；有债时 withdraw 须 **HF 仍安全** |
+| **被清算** | 被动 | **HF&lt;1** 时清算人 `liquidationCall` |
+
+**存款 vs 抵押**：supply 必得 aToken；是否计入 HF 取决于 **该 Reserve 是否 `usingAsCollateral`**。可「USDC 只存不吃抵押 + BTC 作抵押借 USDC」。同一 Reserve 通常 **整笔余额要么算抵押要么不算**，不是同一 aToken 里切 50% 抵押。
+
+### 架构一句话
+
+```
+用户 → Pool.sol → Supply/Borrow/Liquidation Logic → 每资产一条 Reserve
+                → aToken / Stable|Variable DebtToken → Oracle（base currency）
+```
+
+- **aBTC、aUSDC**：不同 **Reserve** 的不同 aToken 合约，机制相同；**一个 Pool 地址，多 Reserve**。
+- **协议收入**：主要是 **reserve factor**（从借款利息抽成）+ 可选 **liquidation protocol fee**；不是 CEX 式「每笔交易费」。
+
+### 账户级 HF（与永续对齐）
+
+- **Kinza**：同一 Pool 下，用户 **所有作抵押的 aToken + 所有债务 token**，预言机换算后 → **一个 HF**。
+- **MetaNode 永续**：用户 **各市场仓位** 合成 → **netValue vs MM**。
+- **共同点**：指标都是 **账户级**；**不同点**：借贷清算按 **`collateralAsset + debtAsset` 分笔** + Close Factor；永续常 **整笔 trade / 强平 bundle**。
+
+```text
+HF = (总抵押_base × avgLiquidationThreshold) / 总债务_base   // 无债时 HF = max
+可借 ≈ 总抵押_base × avgLTV − 总债务_base                    // borrow 校验用 LTV + 借后 HF
+```
+
+### 清算（口播定稿）
+
+**条件**：**HF &lt; 1**（账户级）。清算人 **无需 supply/抵押**，用 **债务 underlying**（如 USDC）替借款人还款。
+
+| 参数 | 作用对象 | 规则 |
+|------|----------|------|
+| **Close Factor 50%** | **债务** | HF **&gt; 0.95** 时，单次最多还该资产债务的 **50%** |
+| **Close Factor 100%** | **债务** | HF **≤ 0.95** 时，单次最多 **100%** |
+| **liquidationBonus ~105%** | **抵押** | 按 oracle 换算「刚够覆盖本次还款」的抵押量，再 **多约 5%** |
+
+**资金流向**：
+
+1. 清算人 `transferFrom` **USDC** → 债务 Reserve 的 **aToken 合约** + `handleRepayment` → **burn 借款人债务**。
+2. 从借款人 **作抵押的 aBTC** 扣减（burn 或 `transferOnLiquidation`）→ 清算人拿 **underlying BTC**（`receiveAToken=false`）或 **aBTC**（`true`）。
+3. **Bonus 从借款人抵押里扣**，不是协议增发；借款人 **债务减少 + 抵押多减 bonus 那一段**。
+
+**口算例题（示意）**：HF=0.98 → 最多还 **50% 债务**；付 5000 USDC 可拿约 **值 5250 USD 的 BTC**（105%，扣协议费前）。多次清算直到 HF≥1 或抵押/债务清空。
+
+**清算人盈亏**：链上 bonus 是 **多拿抵押**；**立刻按市价卖掉**且价接近 oracle 时 **直接受益**；若 **抵押跌价 / 滑点 / gas / oracle 与市价偏离** 则可能不赚钱。Bot 通常 **收到即对冲**。
+
+### vs MetaNode 清算（简表）
+
+| | Kinza 借贷 | MetaNode 永续 |
+|--|------------|---------------|
+| 触发 | HF &lt; 1 | netValue &lt; MM |
+| 激励形式 | **多拿 ~5% 抵押**（quantity bonus） | **折扣价接盘仓位**（price） |
+| 清算人付出 | **债务资产**（USDC） | 保证金/按规则接盘 |
+| 可清算范围 | 仅 **已标记抵押** 的 Reserve 余额 | 账户下相关仓位 |
+
+### Day 18 进度
+
+- [x] 宏观：supply / 抵押 / borrow / HF 账户级 / aToken per Reserve
+- [x] 清算：Close Factor vs bonus、清算人角色、aToken 在清算中的动账
+- [x] 与永续对比：账户级指标 + 执行粒度
+- [ ] 代码走读：`GenericLogic.calculateUserAccountData`（HF 实现）
+- [ ] 代码走读：`LiquidationLogic.executeLiquidationCall` 逐步
+- [ ] `SupplyLogic` / `BorrowLogic` + scaled balance
+
 ## 学习清单
 
 ### Week 1 前半（配合文档阅读）
@@ -218,7 +294,7 @@ Solidity 0.8.10 · Hardhat · Foundry · Chainlink Oracle · The Graph · LayerZ
 
 | 仓库 | 说明 |
 |------|------|
-| `KZA-lending` | 核心借贷合约（Aave V3 fork） |
+| `KinzaFinance/KZA-lending` | 核心借贷合约（Aave V3 fork） |
 | `KZA-1.0` | KZA 治理代币经济学 |
 | `omnichain-kBTC` | 跨链 kBTC 包装 |
 | `lending-subgraph` | The Graph 链上索引 |
