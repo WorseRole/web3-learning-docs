@@ -50,6 +50,7 @@ export default defineConfig({
             { text: '概览', link: '/projects/' },
             { text: 'MetaNode 永续合约', link: '/projects/metanode-perpetual' },
             { text: 'KinzaFinance 借贷', link: '/projects/kinza-lending' },
+            { text: 'Kinza 简历 & 学习路径', link: '/projects/kinza-lending-简历与学习路径' },
             { text: '国庆面试一页纸（打印）', link: '/interview/国庆面试一页纸' },
           ]
         }

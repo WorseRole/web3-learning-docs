@@ -1,6 +1,7 @@
 # KinzaFinance 多链借贷协议
 
-> **简历定位**：Aave V3 架构 fork 的多链借贷协议，负责清算逻辑、健康因子计算与借贷主流程。
+> **简历定位**：Aave V3 架构 fork 的多链借贷协议，负责清算逻辑、健康因子计算与借贷主流程。  
+> **按简历学习（推荐入口）**：[Kinza 简历定稿 & 5 天学习路径](./kinza-lending-简历与学习路径)
 
 ## 项目背景
 
@@ -40,7 +41,7 @@ kBTC 作为抵押资产上架 KZA-lending
 
 ## 工程架构 · 用户时序 · 代理（Day 19）
 
-> **本地 monorepo**：`~/Desktop/personal/liyanyan/KinzaFinance/KZA-lending`
+> **本地 monorepo**：`/Users/liyanyan/Desktop/personal/Finance/KZA-lending`（同结构亦可 `KinzaFinance/KZA-lending`）
 
 ### 工具链
 
@@ -296,7 +297,7 @@ Solidity 0.8.10 · Hardhat · Foundry · Chainlink Oracle · The Graph · LayerZ
 
 ## Day 18 · 宏观 + 清算（2026-10-15）
 
-> **本地 monorepo**：`~/Desktop/personal/liyanyan/KinzaFinance` · 合约深挖 **`KZA-lending/`**（与文档中的 `KZA-lending` 同仓）。
+> **本地 monorepo**：`/Users/liyanyan/Desktop/personal/Finance` · 合约深挖 **`KZA-lending/`**。
 
 ### 用户路径（宏观）
 
