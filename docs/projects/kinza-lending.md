@@ -38,13 +38,113 @@ kBTC 作为抵押资产上架 KZA-lending
 └─────────────────────────────────────────┘
 ```
 
+## 工程架构 · 用户时序 · 代理（Day 19）
+
+> **本地 monorepo**：`~/Desktop/personal/liyanyan/KinzaFinance/KZA-lending`
+
+### 工具链
+
+| 项 | 说明 |
+|----|------|
+| 合约来源 | **Aave V3 Core fork**（`package.json`：`@aave/core-v3`） |
+| 编译 / 测试 | **Hardhat** + TS（`npm run test` → `test-suites/*.spec.ts`） |
+| Foundry | **本仓无** `foundry.toml`；练手用 **FoundryStudy**；读 Kinza 以 **contracts/** 为主 |
+| Solidity | **0.8.10** |
+
+### 链上拓扑（用户 vs 管理员）
+
+```
+前端/钱包
+    │ approve(underlying) + 交易
+    ▼
+Pool 代理地址  ←── PoolAddressesProvider.getPool()  （地址不变）
+    │ delegatecall
+    ▼
+Pool / L2Pool 实现合约  →  SupplyLogic / BorrowLogic / LiquidationLogic
+    │                      ReserveLogic / ValidationLogic / GenericLogic
+    ▼
+每 Reserve：aToken + Stable/Variable DebtToken + ReserveData
+    ▼
+AaveOracle（ADDRESSES_PROVIDER.getPriceOracle()）
+
+管理员（非普通用户）：PoolConfigurator 改 LTV / 清算阈值 / bonus 等
+```
+
+**Logic 库不对用户暴露**；只有 **Pool 代理地址**是业务入口。
+
+### 代理与升级（≠ FoundryStudy UUPS）
+
+| | Kinza / Aave Pool | FoundryStudy Counter |
+|--|-------------------|----------------------|
+| 代理类型 | **InitializableImmutableAdminUpgradeabilityProxy** | **ERC1967Proxy + UUPS** |
+| 代理合约文件 | `protocol/libraries/aave-upgradeability/InitializableImmutableAdminUpgradeabilityProxy.sol` | `FoundryStudy` 内 OpenZeppelin |
+| 谁升级 | **PoolAddressesProvider owner / 治理** → `setPoolImpl(newImpl)` | **Owner** 对 Proxy 调 impl 上 **`upgradeToAndCall`** |
+| 用户地址 | 始终 **Pool 代理地址** | 始终 **Proxy 地址** |
+| Pool 构造函数 | `constructor(IPoolAddressesProvider provider)` 写在 **实现合约**上；链上实例通过 **`initialize(address)`** 初始化 | impl `constructor` + Proxy `initialize` |
+
+**首次部署 / 升级**（`PoolAddressesProvider._updateImpl`）：
+
+- 尚无 proxy → `new InitializableImmutableAdminUpgradeabilityProxy` → `initialize(implementation, initialize(provider))`
+- 已有 proxy → **`upgradeToAndCall(newImplementation, …)`**（`setPoolImpl`）
+
+**L2Pool**：`contract L2Pool is Pool`，增加 `supply(bytes32 args)` 等 **压缩 calldata** 入口，内部仍调 **`supply(asset, amount, …)`**。L2 链常 **直接以 L2Pool 为 impl** 或治理 **升级 impl 到 L2Pool**；不是改用户 URL，须 **storage layout 兼容 + 治理**。主网不必为「扩展」随意升 L2Pool。
+
+**面试 30s：** 用户对 **AddressesProvider 注册的 Pool 代理** 交互；升级换 **implementation**，不换 **Pool 代理地址**；Kinza 用 **Immutable Admin Proxy**，与 Sepolia 练的 **UUPS** 升级权限位置不同。
+
+### 用户时序（函数级）
+
+**前提**：对 underlying **`approve(Pool, amount)`** 或 **`supplyWithPermit`**。
+
+| 场景 | 用户调用（Pool） | 核心 Logic |
+|------|------------------|------------|
+| 存款 | **`supply(asset, amount, onBehalfOf, referralCode)`** | `SupplyLogic.executeSupply` → `updateState` → mint **aToken** |
+| 借款 | **`borrow(asset, amount, rateMode, referral, onBehalfOf)`** | `BorrowLogic.executeBorrow` → **`validateBorrow`**（含 **GenericLogic**）→ mint 债务 → **`aToken.transferUnderlyingTo`** |
+| 还款 | **`repay(...)`** | `BorrowLogic.executeRepay` |
+| 取款 | **`withdraw(...)`** | `SupplyLogic.executeWithdraw`（有债时仍看 HF） |
+| 开/关抵押 | **`setUserUseReserveAsCollateral`** | 影响 HF 分子 |
+| 清算 | **`liquidationCall(collateral, debt, user, debtToCover, receiveAToken)`** | `LiquidationLogic.executeLiquidationCall` |
+| 只读账户 | **`getUserAccountData(user)`** | `PoolLogic` → **GenericLogic** |
+
+**宏观调用链（不必严格线性，但面试可画）：**
+
+```
+Pool → XxxLogic → ReserveLogic.updateState
+              → ValidationLogic.validate*
+              → GenericLogic.calculateUserAccountData（borrow / liquidate / 视图）
+              → AToken / DebtToken + ERC20 转账
+```
+
+### 合约目录（读代码顺序）
+
+```
+KinzaFinance/KZA-lending/contracts/protocol/
+├── pool/Pool.sol              # 用户 API
+├── pool/L2Pool.sol            # L2 压缩 calldata（可选）
+├── configuration/
+│   PoolAddressesProvider.sol  # 代理注册表 + setPoolImpl
+│   PoolConfigurator.sol       # 管理员参数
+├── libraries/logic/           # 业务库
+├── tokenization/AToken.sol, VariableDebtToken.sol, base/ScaledBalanceTokenBase.sol
+```
+
+### Day 19+ 精读顺序（按时序）
+
+1. `Pool.sol`：`supply` / `borrow` / `liquidationCall` 签名  
+2. `SupplyLogic.executeSupply` · `BorrowLogic.executeBorrow`  
+3. **`GenericLogic.calculateUserAccountData`**（HF）  
+4. `ValidationLogic.validateBorrow`（HF>1 + LTV）  
+5. `LiquidationLogic.executeLiquidationCall`  
+6. `ScaledBalanceTokenBase._mintScaled`
+
+---
+
 ## 我负责的模块
 
 > 以下模块按「两周可学透 + 面试高频 + 和永续清算经验重合」选定。
 
 ### 模块 1：清算逻辑（重点 ⭐⭐⭐）
 
-**文件**：`KZA-lending/contracts/protocol/libraries/logic/LiquidationLogic.sol`
+**文件**：`KinzaFinance/KZA-lending/contracts/protocol/libraries/logic/LiquidationLogic.sol`
 
 | 职责 | 说明 |
 |------|------|
@@ -76,7 +176,7 @@ Pool.liquidationCall(collateral, debt, user, debtToCover, receiveAToken)
 
 ### 模块 2：健康因子计算（重点 ⭐⭐⭐）
 
-**文件**：`KZA-lending/contracts/protocol/libraries/logic/GenericLogic.sol`
+**文件**：`KinzaFinance/KZA-lending/contracts/protocol/libraries/logic/GenericLogic.sol`
 
 **核心公式（必须能背）**：
 
@@ -259,11 +359,12 @@ HF = (总抵押_base × avgLiquidationThreshold) / 总债务_base   // 无债时
 | 清算人付出 | **债务资产**（USDC） | 保证金/按规则接盘 |
 | 可清算范围 | 仅 **已标记抵押** 的 Reserve 余额 | 账户下相关仓位 |
 
-### Day 18 进度
+### Day 18–19 进度
 
 - [x] 宏观：supply / 抵押 / borrow / HF 账户级 / aToken per Reserve
 - [x] 清算：Close Factor vs bonus、清算人角色、aToken 在清算中的动账
 - [x] 与永续对比：账户级指标 + 执行粒度
+- [x] Pool → Logic 时序扫读；文档 § **工程架构 · 用户时序 · 代理**
 - [ ] 代码走读：`GenericLogic.calculateUserAccountData`（HF 实现）
 - [ ] 代码走读：`LiquidationLogic.executeLiquidationCall` 逐步
 - [ ] `SupplyLogic` / `BorrowLogic` + scaled balance
