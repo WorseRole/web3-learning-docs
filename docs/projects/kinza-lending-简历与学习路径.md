@@ -1,9 +1,9 @@
 # KinzaFinance 借贷 · 简历定稿 & 按简历学习
 
 > **用法**：先背「简历可直接粘贴」→ 只做「学习路径」里对应天的任务 → 勾完「达标自测」再改 PDF。  
-> **代码根目录**：`/Users/liyanyan/Desktop/personal/Finance/KZA-lending`  
+> **代码根目录**：`/Users/showmac/Desktop/personal/liyanyan/KinzaFinance/KZA-lending`  
 > **详述文档**：[KinzaFinance 多链借贷协议](./kinza-lending)  
-> **源码中文注释**：`KZA-lending/contracts/protocol/README-学习注释.md`（精读文件内搜 `【学】`）
+> **精读注释**：优先看本页 **Day A+** 与 [kinza-lending § 工程架构](./kinza-lending#工程架构-用户时序-代理-day-19)；若本地有 `contracts/protocol/README-学习注释.md` 可搜 `【学】`
 
 ---
 
@@ -17,7 +17,7 @@
 **职责与成果（4 条，面试按条展开）**
 
 1. **借贷主流程**：梳理并实现级理解 `Pool.supply` / `Pool.borrow` 调用链：`SupplyLogic` / `BorrowLogic` → `ReserveLogic.updateState` → `ValidationLogic` → mint **aToken** / 债务 token，借款时 `aToken.transferUnderlyingTo` 出金。
-2. **健康因子与借款校验**：精读 `GenericLogic.calculateUserAccountData`，掌握多抵押、多债务在 **base currency** 下的加权 **LTV / 清算阈值**；`validateBorrow` 约束 **可借额度** 与 **借后 HF ≥ 1**（HF 分子用 **liquidationThreshold**，不是 LTV）。
+2. **健康因子与借款校验**：精读 `GenericLogic.calculateUserAccountData`，掌握多抵押、多债务在 **base currency** 下的加权 **LTV / 清算阈值**；`validateBorrow` 要求 **借前 HF > 1**（`HEALTH_FACTOR_LIQUIDATION_THRESHOLD`）且 **LTV 可借额度**（`(已有债+本次借)/LTV ≤ 总抵押`）；**HF 分子用 liquidationThreshold，不是 LTV**。
 3. **清算逻辑**：精读 `LiquidationLogic.executeLiquidationCall`，掌握 **HF < 1** 触发、**Close Factor**（HF > 0.95 单次最多还 50% 债务，否则 100%）、清算人还 **债务资产** 换 **抵押 + ~5% bonus** 的资金路径。
 4. **工程与升级**：理解 **一个 Pool 代理地址 + 多 Reserve**（每资产一套 aToken/DebtToken/`ReserveData`）；升级通过 `PoolAddressesProvider.setPoolImpl` 更换 **implementation**，用户入口地址不变（Immutable Admin Proxy，与 UUPS 练手项目对比能讲清差异）。
 
@@ -36,8 +36,8 @@ KZA 代币排放、Voter/Minter、Subgraph、LayerZero、自己改生产参数�
 | Pool → Supply/Borrow → Logic 库 → aToken | 🟡 扫过 | 能画调用链，细节未闭卷 |
 | 多 Reserve（kBTC、USDC 等） | ✅ | 一个 Pool，每资产一条 Reserve |
 | 代理升级 | 🟡 | 知道换 impl；需能口述 `setPoolImpl` / `_updateImpl` |
-| GenericLogic / HF | ⬜ | **下一优先级** |
-| LiquidationLogic | ⬜ | 宏观懂，代码逐步未走完 |
+| GenericLogic / HF | ⬜ | **下一优先级（Day B）** |
+| LiquidationLogic | 🟡 | 宏观 + 口播已定稿；`executeLiquidationCall` 逐步未闭卷 |
 | Scaled balance + index | ⬜ | 公式知道，未扣 `_mintScaled` |
 
 **结论**：简历四条都能写，但 **第 2、3 条** 必须按下面路径学完再面试深挖；第 1、4 条补 1～2 天即可闭卷。
@@ -64,7 +64,7 @@ KZA 代币排放、Voter/Minter、Subgraph、LayerZero、自己改生产参数�
 
 ### Day A+ · `cache` / `updateState` / index / 利率（supply 必读）
 
-> 源码中文注释：`KZA-lending/contracts/protocol/libraries/logic/ReserveLogic.sol`、`types/DataTypes.sol`（搜 `【学`）。
+> 精读文件：`KinzaFinance/KZA-lending/contracts/protocol/libraries/logic/ReserveLogic.sol`、`types/DataTypes.sol`。
 
 #### 要不要看 `_updateIndexes` / `_accrueToTreasury`？
 
@@ -134,7 +134,7 @@ nextVariableBorrowIndex = factor × currVariableBorrowIndex
 | 顺序 | 读什么 | 关注什么 |
 |------|--------|----------|
 | 1 | `GenericLogic.sol` → `calculateUserAccountData` | 遍历 `userConfig`；只统计 **usingAsCollateral** 的 aToken；债务加总；**avgLtv / avgLiquidationThreshold** 加权 |
-| 2 | `ValidationLogic.sol` → `validateBorrow` | 可借 vs LTV；模拟借后 HF；常量 `HEALTH_FACTOR_LIQUIDATION_THRESHOLD = 1e18` |
+| 2 | `ValidationLogic.sol` → `validateBorrow` | **借前** `calculateUserAccountData` → **HF > 1e18**；**LTV** `(userDebt+amount)/LTV ≤ 抵押`（约 259–266 行） |
 | 3 | `Pool.sol` → `getUserAccountData` | 返回值与 GenericLogic 对应关系 |
 
 **必背公式**：
@@ -210,7 +210,7 @@ HF = (总抵押_base × avgLiquidationThreshold) / 总债务_base
 
 **加分（非必须）**
 
-- [ ] `Finance/docs/kza-learning/03-day4-5-risk-liquidation.md` 扫一遍
+- [ ] 可选：本地 `docs/kza-learning/` 风险清算笔记（无则读 [kinza-lending Day 18](./kinza-lending#day-18-宏观-清算-2026-10-15)）
 - [ ] Hardhat 跑通一条 supply 测试或 fork 只读 `getUserAccountData`
 
 ---
@@ -223,7 +223,7 @@ HF = (总抵押_base × avgLiquidationThreshold) / 总债务_base
 
 ### 2 分钟存借
 
-> 存款前 approve underlying 到 Pool。`supply` 先对该 Reserve **updateState** 更新 **liquidityIndex**，校验通过后把 underlying 转到 **aToken 合约**，给用户 mint **scaledBalance** 的 aToken。若要借出别的资产，还要把某 Reserve 的 aToken **标为 collateral**。`borrow` 同样先 updateState，**validateBorrow** 里用 **GenericLogic** 算全账户抵押和债务，检查 **LTV 可借额度** 和 **借后 HF ≥ 1**。通过后 mint **variable 或 stable debt token**，再由 aToken **transferUnderlyingTo** 把池里现金转给借款人。利息不靠遍历用户，靠 **index × scaledBalance** 复利。
+> 存款前 approve underlying 到 Pool。`supply` 先对该 Reserve **updateState** 更新 **liquidityIndex**，校验通过后把 underlying 转到 **aToken 合约**，给用户 mint **scaledBalance** 的 aToken。若要借出别的资产，还要把某 Reserve 的 aToken **标为 collateral**。`borrow` 同样先 updateState，**validateBorrow** 里 **GenericLogic** 算全账户抵押和债务：**借前 HF 必须 > 1**，且 **LTV 检查** 保证本次借款后仍不超过可借上限。通过后 mint **variable 或 stable debt token**，再由 aToken **transferUnderlyingTo** 把池里现金转给借款人。利息不靠遍历用户，靠 **index × scaledBalance** 复利。
 
 ### 1.5 分钟清算
 
@@ -250,9 +250,9 @@ HF = (总抵押_base × avgLiquidationThreshold) / 总债务_base
 
 | 资源 | 路径 |
 |------|------|
-| 本地合约 | `/Users/liyanyan/Desktop/personal/Finance/KZA-lending/contracts/protocol/` |
-| 结构化 14 天（可选） | `/Users/liyanyan/Desktop/personal/Finance/docs/kza-learning/` |
+| 本地合约 | `/Users/showmac/Desktop/personal/liyanyan/KinzaFinance/KZA-lending/contracts/protocol/` |
+| 结构化笔记（可选） | 本库 [kinza-lending.md](./kinza-lending.md) + 本页 Day A～E |
 | 本库详述 | [kinza-lending.md](./kinza-lending.md) |
 | 永续对照 | [metanode-perpetual.md](./metanode-perpetual.md) |
 
-*创建：2026-10-20 · 配合简历双项目（MetaNode + Kinza）*
+*创建：2026-10-20 · 更新：2026-10-21（路径 KinzaFinance + validateBorrow 表述）· 配合简历双项目（MetaNode + Kinza）*

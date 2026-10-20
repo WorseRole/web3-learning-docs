@@ -41,7 +41,7 @@ kBTC 作为抵押资产上架 KZA-lending
 
 ## 工程架构 · 用户时序 · 代理（Day 19）
 
-> **本地 monorepo**：`/Users/liyanyan/Desktop/personal/Finance/KZA-lending`（同结构亦可 `KinzaFinance/KZA-lending`）
+> **本地 monorepo**：`/Users/showmac/Desktop/personal/liyanyan/KinzaFinance/KZA-lending`
 
 ### 工具链
 
@@ -133,7 +133,7 @@ KinzaFinance/KZA-lending/contracts/protocol/
 1. `Pool.sol`：`supply` / `borrow` / `liquidationCall` 签名  
 2. `SupplyLogic.executeSupply` · `BorrowLogic.executeBorrow`  
 3. **`GenericLogic.calculateUserAccountData`**（HF）  
-4. `ValidationLogic.validateBorrow`（HF>1 + LTV）  
+4. `ValidationLogic.validateBorrow`（借前 HF>1 + LTV 可借）  
 5. `LiquidationLogic.executeLiquidationCall`  
 6. `ScaledBalanceTokenBase._mintScaled`
 
@@ -297,14 +297,14 @@ Solidity 0.8.10 · Hardhat · Foundry · Chainlink Oracle · The Graph · LayerZ
 
 ## Day 18 · 宏观 + 清算（2026-10-15）
 
-> **本地 monorepo**：`/Users/liyanyan/Desktop/personal/Finance` · 合约深挖 **`KZA-lending/`**。
+> **本地 monorepo**：`/Users/showmac/Desktop/personal/liyanyan/KinzaFinance` · 合约深挖 **`KZA-lending/`**。
 
 ### 用户路径（宏观）
 
 | 路径 | 用户做什么 | 系统做什么 |
 |------|------------|------------|
 | **只存不借** | `Pool.supply` → 拿 **aToken**（如 aUSDC） | underlying 进池；**liquidityIndex** 计息（**浮动存款利率**，非「稳定存息」） |
-| **抵押 + 借款** | 某资产 aToken **标为 collateral** → `borrow` 其他/同资产 | `updateState` → **可借额度（avgLTV）** + **借后 HF≥1** → mint **债务 token**，池子转出 underlying |
+| **抵押 + 借款** | 某资产 aToken **标为 collateral** → `borrow` 其他/同资产 | `updateState` → **validateBorrow**（**借前 HF>1** + **LTV 可借**）→ mint **债务 token**，池子转出 underlying |
 | **退出** | `repay` / `withdraw` | burn 债务 / aToken；有债时 withdraw 须 **HF 仍安全** |
 | **被清算** | 被动 | **HF&lt;1** 时清算人 `liquidationCall` |
 
@@ -328,7 +328,7 @@ Solidity 0.8.10 · Hardhat · Foundry · Chainlink Oracle · The Graph · LayerZ
 
 ```text
 HF = (总抵押_base × avgLiquidationThreshold) / 总债务_base   // 无债时 HF = max
-可借 ≈ 总抵押_base × avgLTV − 总债务_base                    // borrow 校验用 LTV + 借后 HF
+可借 ≈ 总抵押_base × avgLTV − 总债务_base                    // validateBorrow：借前 HF>1 + LTV 上限
 ```
 
 ### 清算（口播定稿）
