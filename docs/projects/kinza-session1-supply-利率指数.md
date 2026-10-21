@@ -88,6 +88,37 @@ scaled = 1000e6 × 1e27 / 1e27 = 1000e6
 
 利率为 0 时函数不会被调用，index 保持原值。初始 index 是 `RAY`（1e27），此时 scaled = 面值。
 
+### 为什么还要乘旧 index
+
+`liquidityRate × Δt / 一年` 只是**这一段**的收益。代码里的 `factor` 是把它加回本金：
+
+```text
+interest = liquidityRate × Δt / SECONDS_PER_YEAR    // 半年 10% → 0.05e27
+factor   = RAY + interest                          // 1.05e27，即 1 + 这段收益
+```
+
+`factor` 表示「这段时间结束时，本金变成原来的多少倍」，不是收益本身。
+
+旧 index 已经含有 t1 之前所有时段的涨幅。index 是份额单价，`scaled` 不变，单价必须累乘：
+
+```text
+余额_t2 = 余额_t1 × (factor / RAY)
+        = scaled × currLiquidityIndex / RAY × (factor / RAY)
+
+nextLiquidityIndex = currLiquidityIndex × factor / RAY
+```
+
+只把 index 换成最新的 `factor`，会丢掉以前的利息。两段分开看：
+
+| 时段 | 年化 | factor | 新 index | 余额（scaled = 1000） |
+|------|------|--------|----------|------------------------|
+| 第 1 年 | 10% | 1.10 | 1.00 × 1.10 = **1.10** | 1100 |
+| 第 2 年 | 20% | 1.20 | 1.10 × 1.20 = **1.32** | 1320 |
+
+第 2 年的 20% 长在 1100 上，所以是 1320。若新 index 直接写成 1.20，余额回到 1200，第一年多出的 100 消失。
+
+存入时的关系是同一个比：`scaled = amount × RAY / index_存入时`，之后 `余额 = amount × index_现在 / index_存入时`。index 一直累乘，这个比才是「从存入到现在涨了多少」。
+
 ---
 
 ## 2. 可变借款指数（复利，supply 也会更新）
