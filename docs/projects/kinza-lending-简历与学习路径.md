@@ -64,7 +64,7 @@ KZA 代币排放、Voter/Minter、Subgraph、LayerZero、自己改生产参数�
 
 ### Day A+ · `cache` / `updateState` / index / 利率（supply 必读）
 
-> 手算笔记：[Session1 supply · 利率与指数](./kinza-session1-supply-利率指数)  
+> 手算笔记：[Session1 supply · 利率与指数](./kinza-session1-supply-利率指数) · [结息、校验与三档利率](./kinza-session1-supply-结息与利率)  
 > 精读文件：`KinzaFinance/KZA-lending/contracts/protocol/libraries/logic/ReserveLogic.sol`、`types/DataTypes.sol`。源码里搜 `【学】`。
 
 #### 要不要看 `_updateIndexes` / `_accrueToTreasury`？
@@ -255,6 +255,7 @@ HF = (总抵押_base × avgLiquidationThreshold) / 总债务_base
 | 结构化笔记（可选） | 本库 [kinza-lending.md](./kinza-lending.md) + 本页 Day A～E |
 | 本库详述 | [kinza-lending.md](./kinza-lending.md) |
 | Session1 利率/指数手算 | [kinza-session1-supply-利率指数.md](./kinza-session1-supply-利率指数.md) |
+| Session1 结息与三档利率 | [kinza-session1-supply-结息与利率.md](./kinza-session1-supply-结息与利率.md) |
 | 永续对照 | [metanode-perpetual.md](./metanode-perpetual.md) |
 
 *创建：2026-10-20 · 更新：2026-10-21（路径 KinzaFinance + validateBorrow 表述）· 配合简历双项目（MetaNode + Kinza）*

@@ -2,7 +2,7 @@
 
 > **简历定位**：Aave V3 架构 fork 的多链借贷协议，负责清算逻辑、健康因子计算与借贷主流程。  
 > **按简历学习（推荐入口）**：[Kinza 简历定稿 & 5 天学习路径](./kinza-lending-简历与学习路径)  
-> **Session1 手算**：[supply 利率与指数](./kinza-session1-supply-利率指数)
+> **Session1 手算**：[supply 利率与指数](./kinza-session1-supply-利率指数) · [结息、校验与三档利率](./kinza-session1-supply-结息与利率)
 
 ## 项目背景
 
