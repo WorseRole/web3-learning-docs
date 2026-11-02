@@ -258,4 +258,4 @@ HF = (总抵押_base × avgLiquidationThreshold) / 总债务_base
 | Session1 结息与三档利率 | [kinza-session1-supply-结息与利率.md](./kinza-session1-supply-结息与利率.md) |
 | 永续对照 | [metanode-perpetual.md](./metanode-perpetual.md) |
 
-*创建：2026-10-20 · 更新：2026-10-21（路径 KinzaFinance + validateBorrow 表述）· 配合简历双项目（MetaNode + Kinza）*
+*创建：2026-10-20 · 更新：2026-11-02（Session1 supply 主链路收尾：利率、mint、抵押）· 配合简历双项目（MetaNode + Kinza）*

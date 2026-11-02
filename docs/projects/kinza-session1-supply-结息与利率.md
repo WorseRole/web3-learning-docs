@@ -1,12 +1,13 @@
-# Session1 · supply 结息、校验、三档利率
+# Session1 · supply 结息、校验、三档利率、铸币
 
-> 2026-10-27。接着 [利率与指数](./kinza-session1-supply-利率指数) 里的 `factor × 旧 index`。  
+> 更新：2026-11-02。接着 [利率与指数](./kinza-session1-supply-利率指数)。  
 > 代码：`KinzaFinance/KZA-lending/contracts/protocol/`  
-> 主路径：`Pool.supply` → `SupplyLogic.executeSupply`
+> 主路径：`Pool.supply` → `SupplyLogic.executeSupply`  
+> **Session1 的 supply 主链路到文末第 7、8 节结束。**
 
-这一段从 `updateState` 里的 `_accrueToTreasury` 看到 `updateInterestRates`。存款指数的线性公式不再重复。
+存款指数的线性公式见上一篇。这一篇从 `_accrueToTreasury` 走到转账、`mint`、自动抵押。
 
-`executeSupply` 里和计息、校验、报价有关的顺序：
+完整顺序：
 
 ```text
 cache
@@ -15,9 +16,11 @@ updateState
   _accrueToTreasury       // 这段借款利息 × reserveFactor，记给金库
   lastUpdateTimestamp = now
 validateSupply            // 金额、三个开关、存款上限（要用新指数）
-updateInterestRates       // 按存入之后的利用率，重写下一时段的三档年化
-safeTransferFrom
-aToken.mint
+updateInterestRates       // 调 calculateInterestRates，写下一时段三档年化
+safeTransferFrom          // underlying → aToken 合约
+aToken.mint → _mintScaled // 铸 scaled，不是面值 amount
+首次存款 → 尝试标抵押
+emit Supply
 ```
 
 校验失败时，`updateState` 已经写过 storage，但 `require` 让整笔交易回滚，指数不会留在链上。下一笔成功的交易从上次提交的时间重新算。
@@ -227,31 +230,53 @@ curr = 2105.17 × 1.10517 = 2326.56
 
 `balanceOf` 不是 aToken 总供应量。`supply` 时转账还没发生，所以要把本次存入加进可用现金；先转账再算会加两次。
 
+代码里是先设起点，再 `+=` 斜率。跟源码对照时记这种写法：
+
+```text
+currentVariableBorrowRate = base
+currentStableBorrowRate   = variableSlope1 + 稳定加价     // getBaseStableBorrowRate()
+```
+
 `U ≤ 拐点`：
 
 ```text
-可变借款利率 = base + variableSlope1 × U / 拐点
-稳定报价 = (variableSlope1 + baseStableRateOffset) + stableSlope1 × U / 拐点
+currentVariableBorrowRate += variableSlope1 × U / 拐点
+currentStableBorrowRate   += stableSlope1 × U / 拐点
 ```
 
-`U > 拐点`：第一段斜率全部加上，超出部分改用 slope2：
+`U > 拐点`：第一段斜率一次加满，第二段按超出比例再加：
 
 ```text
-超出 = (U − 拐点) / (1 − 拐点)
-可变借款利率 = base + variableSlope1 + variableSlope2 × 超出
-稳定报价 = 稳定起点 + stableSlope1 + stableSlope2 × 超出
+excess = (U − 拐点) / (1 − 拐点)
+
+currentVariableBorrowRate += variableSlope1 + variableSlope2 × excess
+currentStableBorrowRate   += stableSlope1 + stableSlope2 × excess
 ```
 
 稳定债占比若超过另一个拐点，新的稳定报价再加 `stableRateExcessOffset × 超出比例`。
 
+两条借款年化都是**折一次的直线**，不是直线加曲线。同一利用率下，新的稳定报价高于可变借款：锁死利率的人把以后的波动留给池子，所以开价更贵。已经借到的稳定债仍按锁定利率滚；`currentStableBorrowRate` 只给下一笔新稳定借款。
+
 存款利率不单独画曲线：
 
 ```text
-整体借款利率 = (可变债务 × 刚算出的可变借款利率 + 稳定债务 × 已有平均稳定利率) / 总债务
-存款利率 = 整体借款利率 × 存款利用率 × (1 − reserveFactor)
+整体借款年化 = (可变债务 × 刚算出的可变借款年化
+              + 稳定债务 × 已有平均稳定利率)
+             / 总债务
+
+存款年化 = 整体借款年化 × 存款利用率 × (1 − reserveFactor)
 ```
 
-稳定债用的是已经锁住的平均利率，不是刚算出的新报价。没有债务时整体借款利率按 0，存款利率是 0。
+稳定债用的是已经锁住的平均利率，不是刚算出的新报价。`supply` 不改这个平均利率。没有债务时整体借款年化按 0，存款年化是 0。
+
+手算核对：可变债 300、可变年化 4%，稳定债 100、平均稳定利率 6%：
+
+```text
+整体借款年化 = (300 × 4% + 100 × 6%) / 400 = 4.5%
+U = 40%、抽成 10% 时：存款年化 = 4.5% × 40% × 90% = 1.62%
+```
+
+`ReserveLogic.updateInterestRates` 本身不算新公式：还原可变债面值 → 调 `calculateInterestRates` → 把三档写回 `reserve` → 发事件。利率怎么来，看懂 `calculateInterestRates` 即可。
 
 ### unbacked
 
@@ -260,3 +285,60 @@ curr = 2105.17 × 1.10517 = 2326.56
 只有 `ACLManager` 里拥有 `BRIDGE` 角色的外部合约能调 `Pool.mintUnbacked` / `backUnbacked`。桥的实现不在本仓库。普通 `supply` 不调用它。没走过桥时 `unbacked = 0`，存款利用率和借款利用率相同。
 
 它不加进可用现金：凭空铸出的 aToken 没有对应的币。只放在存款利用率的分母里，把存款利率摊低。借款利用率仍只看真实现金和债务。
+
+---
+
+## 7. 转账，再铸 scaled
+
+`updateInterestRates` 之后：
+
+```text
+underlying.safeTransferFrom(msg.sender, aToken 合约, amount)
+aToken.mint(msg.sender, onBehalfOf, amount, nextLiquidityIndex)
+```
+
+池子的现金放在 aToken 合约里。`mint` 是普通外部调用，aToken 看到的 `msg.sender` 是 Pool。真正改余额在 `_mintScaled`：
+
+```text
+scaled = amount × RAY / nextLiquidityIndex
+ERC20 内部余额 += scaled          // 加的是份额，不是面值
+```
+
+对外看到的面值现算，不另存利息账户：
+
+```text
+balanceOf = scaled × 当前存款指数 / RAY
+```
+
+用户上次交互时的存款指数存在 **aToken 合约** 的 `_userState[user].additionalData`。期间利息只进事件，不写进 `scaled`：
+
+```text
+期间利息 = scaled × 新指数 / RAY − scaled × additionalData / RAY
+```
+
+两笔存款示例。指数从 1 涨到 1.05：
+
+| 时刻 | 操作 | 铸入 scaled | 总 scaled | balanceOf |
+|------|------|-------------|-----------|-----------|
+| 起点 | 存 1000 | 1000 / 1 = 1000 | 1000 | 1000 |
+| 中间 | 不操作 | — | 1000 | 1050 |
+| 再存 | 存 1000 | 1000 / 1.05 ≈ 952.38 | 1952.38 | ≈ 2050 |
+
+第二笔存同样的 1000，因为指数已涨，得到的份额更少。事件里会把第一笔生出的 50 利息和本笔 1000 一起显示，storage 只加 952.38。
+
+---
+
+## 8. 首次存款才尝试标抵押
+
+`mint` 返回铸造前 `scaled == 0` 时才进这段：
+
+```text
+validateAutomaticUseAsCollateral(...)
+  通过 → userConfig.setUsingAsCollateral(reserve.id, true)
+```
+
+`LTV = 0`、隔离资产且调用者没有专用角色、用户已在隔离模式时，aToken 照样铸出，位图不置位。不是第一次存入则整段跳过。
+
+最后 `emit Supply`。`referralCode` 只写事件。
+
+到这里，`supply` 主链路结束：用户少了 underlying，aToken 合约多了现金，收款人多了 `scaled`，储备的指数、利率和时间戳已更新。
