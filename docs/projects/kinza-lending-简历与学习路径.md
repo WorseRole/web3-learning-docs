@@ -132,11 +132,14 @@ nextVariableBorrowIndex = factor × currVariableBorrowIndex
 
 ### Day B · 对齐简历第 2 条（HF + 校验）
 
+> 口播笔记：[Session2 borrow](./kinza-session2-borrow)
+
 | 顺序 | 读什么 | 关注什么 |
 |------|--------|----------|
 | 1 | `GenericLogic.sol` → `calculateUserAccountData` | 遍历 `userConfig`；只统计 **usingAsCollateral** 的 aToken；债务加总；**avgLtv / avgLiquidationThreshold** 加权 |
 | 2 | `ValidationLogic.sol` → `validateBorrow` | **借前** `calculateUserAccountData` → **HF > 1e18**；**LTV** `(userDebt+amount)/LTV ≤ 抵押`（约 259–266 行） |
 | 3 | `Pool.sol` → `getUserAccountData` | 返回值与 GenericLogic 对应关系 |
+| 4 | `BorrowLogic.executeBorrow` | mint 债务 → `updateInterestRates(taken)` → `transferUnderlyingTo` |
 
 **必背公式**：
 
@@ -256,6 +259,7 @@ HF = (总抵押_base × avgLiquidationThreshold) / 总债务_base
 | 本库详述 | [kinza-lending.md](./kinza-lending.md) |
 | Session1 利率/指数手算 | [kinza-session1-supply-利率指数.md](./kinza-session1-supply-利率指数.md) |
 | Session1 结息与三档利率 | [kinza-session1-supply-结息与利率.md](./kinza-session1-supply-结息与利率.md) |
+| Session2 borrow 口播 | [kinza-session2-borrow.md](./kinza-session2-borrow.md) |
 | 永续对照 | [metanode-perpetual.md](./metanode-perpetual.md) |
 
-*创建：2026-10-20 · 更新：2026-11-02（Session1 supply 主链路收尾：利率、mint、抵押）· 配合简历双项目（MetaNode + Kinza）*
+*创建：2026-10-20 · 更新：2026-11-16（Session2 borrow 口播与 HF/LTV）· 配合简历双项目（MetaNode + Kinza）*
