@@ -36,7 +36,7 @@ KZA 代币排放、Voter/Minter、Subgraph、LayerZero、自己改生产参数�
 | Pool → Supply/Borrow → Logic 库 → aToken | 🟡 扫过 | 能画调用链，细节未闭卷 |
 | 多 Reserve（kBTC、USDC 等） | ✅ | 一个 Pool，每资产一条 Reserve |
 | 代理升级 | 🟡 | 知道换 impl；需能口述 `setPoolImpl` / `_updateImpl` |
-| GenericLogic / HF | ⬜ | **下一优先级（Day B）** |
+| GenericLogic / HF | 🟡 | Day B 口播已过；清算前再闭卷默写公式 |
 | LiquidationLogic | 🟡 | 宏观 + 口播已定稿；`executeLiquidationCall` 逐步未闭卷 |
 | Scaled balance + index | ⬜ | 公式知道，未扣 `_mintScaled` |
 
