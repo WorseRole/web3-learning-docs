@@ -36,8 +36,8 @@ KZA 代币排放、Voter/Minter、Subgraph、LayerZero、自己改生产参数�
 | Pool → Supply/Borrow → Logic 库 → aToken | 🟡 扫过 | 能画调用链，细节未闭卷 |
 | 多 Reserve（kBTC、USDC 等） | ✅ | 一个 Pool，每资产一条 Reserve |
 | 代理升级 | 🟡 | 知道换 impl；需能口述 `setPoolImpl` / `_updateImpl` |
-| GenericLogic / HF | 🟡 | Day B 口播已过；清算前再闭卷默写公式 |
-| LiquidationLogic | 🟡 | 宏观 + 口播已定稿；`executeLiquidationCall` 逐步未闭卷 |
+| GenericLogic / HF | 🟡 | Day B/C 已串进清算；面试前再闭卷默写 |
+| LiquidationLogic | 🟡 | Day C 口播+详稿已过；再练 1～2 遍闭卷 |
 | Scaled balance + index | ⬜ | 公式知道，未扣 `_mintScaled` |
 
 **结论**：简历四条都能写，但 **第 2、3 条** 必须按下面路径学完再面试深挖；第 1、4 条补 1～2 天即可闭卷。
@@ -155,13 +155,15 @@ HF = (总抵押_base × avgLiquidationThreshold) / 总债务_base
 
 ### Day C · 对齐简历第 3 条（清算）
 
+> 口播笔记：[Session3 liquidation](./kinza-session3-liquidation) · 白话详稿：[liquidationCall.txt](../web3/liquidationCall.txt)
+
 | 顺序 | 读什么 | 关注什么 |
 |------|--------|----------|
 | 1 | `LiquidationLogic.sol` → `executeLiquidationCall` | 先算 HF → `validateLiquidationCall` |
 | 2 | 同文件常量 | `DEFAULT_LIQUIDATION_CLOSE_FACTOR = 0.5e4`；`CLOSE_FACTOR_HF_THRESHOLD = 0.95e18` |
 | 3 | 资金动账 | 清算人 USDC 进池；burn 债务；抵押转清算人（bonus） |
 
-**当日交付**：**1.5 分钟清算口播**（见下文）；与 MetaNode 对比 **4 点**（触发 / 执行 / 激励 / 账户粒度）。
+**当日交付**：**1.5 分钟清算口播**（见下文 / Session3）；与 MetaNode 对比 **4 点**（触发 / 执行 / 激励 / 账户粒度）。
 
 ---
 
@@ -260,6 +262,8 @@ HF = (总抵押_base × avgLiquidationThreshold) / 总债务_base
 | Session1 利率/指数手算 | [kinza-session1-supply-利率指数.md](./kinza-session1-supply-利率指数.md) |
 | Session1 结息与三档利率 | [kinza-session1-supply-结息与利率.md](./kinza-session1-supply-结息与利率.md) |
 | Session2 borrow 口播 | [kinza-session2-borrow.md](./kinza-session2-borrow.md) |
+| Session3 liquidation 口播 | [kinza-session3-liquidation.md](./kinza-session3-liquidation.md) |
+| 清算白话详稿 | [docs/web3/liquidationCall.txt](../web3/liquidationCall.txt) |
 | 永续对照 | [metanode-perpetual.md](./metanode-perpetual.md) |
 
-*创建：2026-10-20 · 更新：2026-11-16（Session2 borrow 口播与 HF/LTV）· 配合简历双项目（MetaNode + Kinza）*
+*创建：2026-10-20 · 更新：2026-11-18（Session3 liquidation 口播与详稿）· 配合简历双项目（MetaNode + Kinza）*
