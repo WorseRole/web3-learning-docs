@@ -1,10 +1,14 @@
+---
+aside: false
+outline: false
+---
+
 # Kinza · borrow 白话口播稿
 
 > 口语化手写详稿，方便闭卷前过一遍。  
 > 对应：[Session2 结构化笔记](./kinza-session2-borrow)
 
-```text
-borrow
+<pre class="oral-notes">borrow
 
 说一遍 borrow 借出的流程，和supply 存入有很多相似之处
 都是一开始的 cache，将要借出的underlying 的reserve 从 storage 缓存到 memory中 为了 省gas费用
@@ -40,7 +44,7 @@ borrow
 accruedToTreasury += (总利息 * reserveFactor利息抽成)/nextLiquidityIndex
 
 
-再进行验证 相对于 supply 的核心增量：抵押、借前 HF>1、LTV可借额度、borrow cap、模式开关等。 失败则整笔回滚，不会 mint 债务也不会出金。
+再进行验证 相对于 supply 的核心增量：抵押、借前 HF&gt;1、LTV可借额度、borrow cap、模式开关等。 失败则整笔回滚，不会 mint 债务也不会出金。
 
 首先先看 市场是否启动，是否冻结，借出操作是否可以，稳定利率借款开关是否打开，用户是否允许操作。
 再判断 预言机是否正常，异常则拒绝新借款
@@ -63,8 +67,8 @@ accruedToTreasury += (总利息 * reserveFactor利息抽成)/nextLiquidityIndex
 然后 账户级： 开始统计 已标抵押的 aToken；债务加总；加权 LTV / 清算阈值；HF
 	validateBorrow、withdraw、清算前都会用到
 		只统计位图里已标抵押的 aToken 进总抵押；已标借款的进总债务
-		HF = (总抵押 * avg清算阈值)/总债务 		<- - 用清算阈值，不是LTV
-		可借 = 总抵押 * avgLTV - 总债务 		<- - 能借多少用 LTV
+		HF = (总抵押 * avg清算阈值)/总债务 		&lt;- - 用清算阈值，不是LTV
+		可借 = 总抵押 * avgLTV - 总债务 		&lt;- - 能借多少用 LTV
 
 
 		先看抵押测怎么计算 
@@ -110,15 +114,15 @@ accruedToTreasury += (总利息 * reserveFactor利息抽成)/nextLiquidityIndex
 				能借多少用 avgLTV： 		可借 = 总抵押 * avgLTV - 总债务
 				安不安全用 avg清算阈值：	HF = 总抵押 * avg清算阈值 / 总债务
 
-判断 HF > 1 确保健康
+判断 HF &gt; 1 确保健康
 再对本次借款折成 base = （预言机价格 * amount / 10^decimals）
 
-(已有债_base + 本次借_base) / LTV <= 总抵押_base
+(已有债_base + 本次借_base) / LTV &lt;= 总抵押_base
 
 判断用户是否为稳定利率借款 如果是：
 	校验市场开启了稳定借款
 	不能 用同币抵押再借同币稳定利率 套利率（除非借的比自己该资产aToken余额还多等例外）
-	amount <= 池内可用现金 * maxStableLoanPercent(例如最多借现金的25%)
+	amount &lt;= 池内可用现金 * maxStableLoanPercent(例如最多借现金的25%)
 
 判断如果是否为仓位隔离借款 如果是：
 	若已经在借某种siloed资产，就只能继续借同一种
@@ -135,16 +139,16 @@ validateBorrow通过之后，判断借款是哪个利率来进行 对用户 mint
 		返回并写入cache：nextTotalStableDebt、nextAvgStableBorrowRate
 		供后面算三档利率用
 	若 为可变 VARIABLE：
-		VariableDebtToken.mint(..., amount, nextVariableBorrowIndex) -> scaled = amount * RAY / nextVariableBorrowIndex
+		VariableDebtToken.mint(..., amount, nextVariableBorrowIndex) -&gt; scaled = amount * RAY / nextVariableBorrowIndex
 		实际欠款 = scaled * index / RAY
-		返回全池 scaledTotalSupply -> 写入 nextScaledVariableDebt
+		返回全池 scaledTotalSupply -&gt; 写入 nextScaledVariableDebt
 
 
 首次借这条资产
-	isFirstBorrowing -> userConfig.setBorrowing(reserve.id, true)
+	isFirstBorrowing -&gt; userConfig.setBorrowing(reserve.id, true)
 	位图偶数位置为1，表示这个人在借这个资产
 
-updateInterestRates(added=0, taken=amount) 有借还 -> 更新三档年化
+updateInterestRates(added=0, taken=amount) 有借还 -&gt; 更新三档年化
 	转账还没发生，taken = amount 表示现金马上要少
 	债务已用mint 后的next*，利用率通常上升
 	写出下一时段的存款年化、稳定报价、可变借款年化
@@ -158,5 +162,4 @@ updateInterestRates(added=0, taken=amount) 有借还 -> 更新三档年化
 
 emit Borrow
 	稳定：事件里的利率是锁定的 currentStableRate
-	可变：是刚更新后的 currentVariableBorrowRate
-```
+	可变：是刚更新后的 currentVariableBorrowRate</pre>

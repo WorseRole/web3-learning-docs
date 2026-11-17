@@ -1,0 +1,24 @@
+/* 口播稿与正文：加宽可读区，避免窄栏横滑 */
+:root {
+  --vp-layout-max-width: 1600px;
+}
+
+.VPDoc .content-container {
+  max-width: 1100px !important;
+}
+
+.oral-notes {
+  margin: 0.5rem 0 0;
+  padding: 1.1rem 1.35rem;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  line-height: 1.75;
+  font-size: 0.95rem;
+  font-family: ui-sans-serif, system-ui, -apple-system, "PingFang SC", "Noto Sans SC", sans-serif;
+  background: var(--vp-c-bg-soft);
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 10px;
+  color: var(--vp-c-text-1);
+  tab-size: 4;
+}

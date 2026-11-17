@@ -1,10 +1,14 @@
+---
+aside: false
+outline: false
+---
+
 # Kinza · liquidation 白话口播稿
 
 > 口语化手写详稿，方便闭卷前过一遍。  
 > 对应：[Session3 结构化笔记](./kinza-session3-liquidation)
 
-```text
-liquidationCall
+<pre class="oral-notes">liquidationCall
 
 那我说一下清算。清算是清算人发起的，对被清算人调 Pool.liquidationCall。
 入口参数要想清楚：
@@ -63,7 +67,7 @@ updateState：同区块已结过就直接 return。
 拿到 HF 之后，用 _calculateDebt 定「这次实际清算多少债」。
 
 Close Factor（管还多少债，不管多拿多少抵押）：
-	HF > 0.95	→ closeFactor = 50%
+	HF &gt; 0.95	→ closeFactor = 50%
 	HF ≤ 0.95	→ closeFactor = 100%
 
 注意：作用对象是「该 debtAsset 上」借款人的稳定债+可变债总额，不是全账户所有币种的债。
@@ -79,18 +83,18 @@ Close Factor 100% 只是「最多允许还光」，不是「保证还光」—�
 
 
 然后 validateLiquidationCall（对照 validateBorrow）：
-	borrow：借前要求 HF > 1，且查 LTV 可借
-	liquidate：要求 HF < 1，不查 LTV
+	borrow：借前要求 HF &gt; 1，且查 LTV 可借
+	liquidate：要求 HF &lt; 1，不查 LTV
 
 校验顺序白话版：
 	1) 抵押侧、债务侧市场都要 active，且没 pause
 	2) 预言机哨兵（有配置时）：
-		三个条件或：没配哨兵 OR HF < 0.95 OR 哨兵说允许清算
+		三个条件或：没配哨兵 OR HF &lt; 0.95 OR 哨兵说允许清算
 		作用：L2 排序器宕机/grace 时，拦住「半危仓」被乱清算；
-		HF 已经 < 0.95 则旁路强制允许（坏账风险更大）。
+		HF 已经 &lt; 0.95 则旁路强制允许（坏账风险更大）。
 		0.95 这个数和 Close Factor 阈值相同，含义不同，别混。
 		面试主叙事可一句带过。
-	3) HF 必须 < 1（HEALTH_FACTOR_LIQUIDATION_THRESHOLD = 1e18）
+	3) HF 必须 &lt; 1（HEALTH_FACTOR_LIQUIDATION_THRESHOLD = 1e18）
 	4) 只能清算「已启用抵押」的资产：清算阈值 ≠ 0 且位图 usingAsCollateral
 	   只存未勾抵押的 aToken 不能被拿去偿债
 	5) 该 debtAsset 上用户真的有债：稳定+可变合计 ≠ 0
@@ -131,7 +135,7 @@ eMode 可能覆盖 bonus/价格源——面试不展开，按普通模式讲。
 		清算人实得 = 0.105 - 0.0005 = 0.1045 BTC
 		还债仍是 5000
 
-	3c) 抵押不够（只剩 0.08 BTC < 0.105）
+	3c) 抵押不够（只剩 0.08 BTC &lt; 0.105）
 		拿走全部 0.08 BTC
 		反算还债：debtAmountNeeded = (抵押价值换算成债) / bonus
 				≈ (0.08 * 50000) / 1 / 1.05 ≈ 3810 USDC
@@ -160,7 +164,7 @@ bonus 和协议费都从借款人被扣的抵押里出。
 
 	若 actualDebtToLiquidate ≤ 可变债面值
 		只烧可变，烧 actual 那么多
-	若 actualDebtToLiquidate > 可变债面值
+	若 actualDebtToLiquidate &gt; 可变债面值
 		先烧光可变，再烧稳定：actual - 可变
 
 burn 后把 nextScaledVariableDebt / nextTotalStableDebt 等写回 cache，供后面改利率。
@@ -182,12 +186,12 @@ burn 后把 nextScaledVariableDebt / nextTotalStableDebt 等写回 cache，供�
 	U ≤ 拐点：
 		可变年化 = base + variableSlope1 * (U/拐点)
 		稳定报价 = (variableSlope1 + 稳定加价) + stableSlope1 * (U/拐点)
-	U > 拐点：
+	U &gt; 拐点：
 		excess = (U - 拐点) / (1 - 拐点)
 		可变年化 = base + variableSlope1 + variableSlope2 * excess
 		稳定报价 = (variableSlope1 + 稳定加价) + stableSlope1 + stableSlope2 * excess
 
-	若稳定债占比 > 稳定债最优占比：
+	若稳定债占比 &gt; 稳定债最优占比：
 		excessStable = (稳定债占比 - 最优占比) / (1 - 最优占比)
 		稳定报价 += stableRateExcessOffset * excessStable
 		← 这是利率策略构造时配的「稳定债过多额外加价」，不是位运算偏移
@@ -230,7 +234,7 @@ burn 后把 nextScaledVariableDebt / nextTotalStableDebt 等写回 cache，供�
 	为啥要 / liquidityIndex 成 scaled：
 		协议费是面值，用户账是 scaled，直接比容易 1 wei 对不齐
 		fee_scaled 和 user_scaled 比：
-		若 fee_scaled > user_scaled → 面值改成 user_scaled * index（最多抽光剩余）
+		若 fee_scaled &gt; user_scaled → 面值改成 user_scaled * index（最多抽光剩余）
 		然后再按调整后面值转给金库
 
 
@@ -243,7 +247,7 @@ emit LiquidationCall
 
 
 和 MetaNode 永续对比（面试加分，四点）：
-	触发：Kinza 是 HF < 1；MetaNode 是 netValue < MM
+	触发：Kinza 是 HF &lt; 1；MetaNode 是 netValue &lt; MM
 	执行：Kinza 按「抵押资产+债务资产」分笔 + Close Factor；永续常整笔强平
 	激励：Kinza 多拿约 5% 抵押（数量 bonus）；永续常折扣价接盘
 	账户粒度：两边都是账户级风控指标
@@ -251,7 +255,7 @@ emit LiquidationCall
 
 30 秒收口：
 	清算人调 liquidationCall，指定抵押币、债务币、借款人。
-	债务侧先结息，算账户 HF；HF<1 才能清。
+	债务侧先结息，算账户 HF；HF&lt;1 才能清。
 	Close Factor 限制单次最多还该债务资产 50% 或 100%；bonus 让清算人多拿一点抵押。
 	烧借款人债务，把抵押（aToken 或 underlying）给清算人，最后清算人把债务币打进池子。
 	操作按资产对，风控按账户。
@@ -260,8 +264,7 @@ emit LiquidationCall
 易错：
 	1. liquidityIndex ≠ liquidationIndex；liquidityRate ≠ liquidationRate
 	2. Close Factor 管债；liquidationBonus 管多拿抵押——两件事
-	3. 清算不查 LTV 可借，只查 HF < 1
+	3. 清算不查 LTV 可借，只查 HF &lt; 1
 	4. 实际清算额 ≤ 该资产总债；抵押不够再下调，剩债可继续挂着
 	5. 标抵押仍生息；burn 债务只是改账，钱最后才 transferFrom
-	6. 隔离 / eMode / 哨兵：有代码，主叙事可不展开
-```
+	6. 隔离 / eMode / 哨兵：有代码，主叙事可不展开</pre>

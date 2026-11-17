@@ -1,10 +1,14 @@
+---
+aside: false
+outline: false
+---
+
 # Kinza · supply 白话口播稿
 
 > 口语化手写详稿，方便闭卷前过一遍。  
 > 对应：[Session1 结构化笔记](./kinza-session1-supply-结息与利率)
 
-```text
-那我先说一下，supply
+<pre class="oral-notes">那我先说一下，supply
 也是先进行cache （将underlying的 reserve 从合约的storage 给转移到 memory 中）可以省gas
 
 然后再 updateState , 同区块已updateState 过就直接return；存款指数要 currLiquidityRate != 0，可变借款指数要池里已有可变债。
@@ -53,15 +57,15 @@ accruedToTreasury += (总利息 * reserveFactor)/nextLiquidityIndex (存的是 s
 可用现金 = 合约中的资产underlying + 这次存款金额
 算出借款利用率后 用来判断与拐点的关系
 
-当借款利用率 <= 拐点时
+当借款利用率 &lt;= 拐点时
 可变借款年化 = base + variableSlpoe1 * U/拐点
 稳定报价 = （variableSlope1 + 稳定加价） + stableSlope1 * U/拐点
 
-当借款利用率 > 拐点时
+当借款利用率 &gt; 拐点时
 可变借款年化 = base + variableSlope1 + variableSlope2 * excess（excess为 （U-拐点）/（1-拐点））
 稳定报价 = （variableSlope1 + 稳定加价） + stableSlope1 + stableSlope2 * excess
 
-再判断 稳定债务利用率 > 稳定债拐点 时
+再判断 稳定债务利用率 &gt; 稳定债拐点 时
 excessStable = （稳定债务利用率 - 拐点）/ （1 - 拐点）
 稳定报价 += stableRateExcessOfferset * excessStable
 
@@ -82,5 +86,4 @@ excessStable = （稳定债务利用率 - 拐点）/ （1 - 拐点）
 铸币的数量就时 scaled的值。 进行对用户进行铸币aToken 为 scaled 个
 
 
-最后 判断是否用户为第一次存款，如果是则需要看位图是否对这笔存款标记为 抵押
-```
+最后 判断是否用户为第一次存款，如果是则需要看位图是否对这笔存款标记为 抵押</pre>
