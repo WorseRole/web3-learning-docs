@@ -155,7 +155,7 @@ HF = (总抵押_base × avgLiquidationThreshold) / 总债务_base
 
 ### Day C · 对齐简历第 3 条（清算）
 
-> 口播笔记：[Session3 liquidation](./kinza-session3-liquidation) · 白话详稿：[liquidationCall.txt](../web3/liquidationCall.txt)
+> 口播笔记：[Session3 liquidation](./kinza-session3-liquidation) · 白话详稿：[kinza-oral-liquidation](./kinza-oral-liquidation)
 
 | 顺序 | 读什么 | 关注什么 |
 |------|--------|----------|
@@ -263,7 +263,7 @@ HF = (总抵押_base × avgLiquidationThreshold) / 总债务_base
 | Session1 结息与三档利率 | [kinza-session1-supply-结息与利率.md](./kinza-session1-supply-结息与利率.md) |
 | Session2 borrow 口播 | [kinza-session2-borrow.md](./kinza-session2-borrow.md) |
 | Session3 liquidation 口播 | [kinza-session3-liquidation.md](./kinza-session3-liquidation.md) |
-| 清算白话详稿 | [docs/web3/liquidationCall.txt](../web3/liquidationCall.txt) |
+| supply / borrow / 清算白话 | [oral-supply](./kinza-oral-supply) · [oral-borrow](./kinza-oral-borrow) · [oral-liquidation](./kinza-oral-liquidation) |
 | 永续对照 | [metanode-perpetual.md](./metanode-perpetual.md) |
 
 *创建：2026-10-20 · 更新：2026-11-18（Session3 liquidation 口播与详稿）· 配合简历双项目（MetaNode + Kinza）*

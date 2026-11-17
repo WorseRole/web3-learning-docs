@@ -1,7 +1,7 @@
 # Session3 · liquidation 口播与主链路
 
 > 更新：2026-11-18。接着 [Session2 borrow](./kinza-session2-borrow)。  
-> 白话手写稿：[docs/web3/liquidationCall.txt](../web3/liquidationCall.txt)  
+> 白话手写稿：[kinza-oral-liquidation](./kinza-oral-liquidation)  
 > 代码：`KinzaFinance/KZA-lending/contracts/protocol/`，搜 `【学】` / `Session3`。  
 > 主路径：`Pool.liquidationCall` → `LiquidationLogic.executeLiquidationCall`
 
@@ -53,7 +53,7 @@ receiveAToken? 转 aToken : 抵押侧结息+taken+burn 出 underlying
 emit LiquidationCall
 ```
 
-细节与例题见 `docs/web3/liquidationCall.txt`。
+细节与例题见 [kinza-oral-liquidation](./kinza-oral-liquidation)。
 
 ---
 

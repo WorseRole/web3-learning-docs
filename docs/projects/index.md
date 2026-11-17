@@ -10,6 +10,15 @@
 | [KinzaFinance 借贷协议](./kinza-lending) | 多链借贷 + BTC 质押 | Solidity / Aave V3 / Chainlink | 深度项目 |
 | [Foundry 实操](/foundry/) | 合约热身 + 串讲 | Foundry / Sepolia | 手感恢复 |
 
+## Kinza 口播稿（站点可读）
+
+| 流程 | 白话详稿 | Session 笔记 |
+|------|----------|--------------|
+| supply | [kinza-oral-supply](./kinza-oral-supply) | [Session1 结息与利率](./kinza-session1-supply-结息与利率) |
+| borrow | [kinza-oral-borrow](./kinza-oral-borrow) | [Session2 borrow](./kinza-session2-borrow) |
+| liquidation | [kinza-oral-liquidation](./kinza-oral-liquidation) | [Session3 liquidation](./kinza-session3-liquidation) |
+| 总入口 | [简历 & 学习路径](./kinza-lending-简历与学习路径) | — |
+
 ## 简历一句话
 
 - **MetaNode**：设计并实现链下撮合 + 链上结算的 DeFi 永续系统，涵盖合约核心库与 Go 微服务后端。

@@ -4,7 +4,8 @@
 > **按简历学习（推荐入口）**：[Kinza 简历定稿 & 5 天学习路径](./kinza-lending-简历与学习路径)  
 > **Session1 手算**：[supply 利率与指数](./kinza-session1-supply-利率指数) · [结息、校验与三档利率](./kinza-session1-supply-结息与利率)  
 > **Session2 口播**：[borrow 主链路与 HF/LTV](./kinza-session2-borrow)  
-> **Session3 口播**：[liquidation 主链路与 Close Factor](./kinza-session3-liquidation)
+> **Session3 口播**：[liquidation 主链路与 Close Factor](./kinza-session3-liquidation)  
+> **白话详稿**：[supply](./kinza-oral-supply) · [borrow](./kinza-oral-borrow) · [liquidation](./kinza-oral-liquidation)
 
 ## 项目背景
 

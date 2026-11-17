@@ -53,6 +53,23 @@ export default defineConfig({
             { text: 'Kinza 简历 & 学习路径', link: '/projects/kinza-lending-简历与学习路径' },
             { text: '国庆面试一页纸（打印）', link: '/interview/国庆面试一页纸' },
           ]
+        },
+        {
+          text: 'Kinza 白话口播',
+          items: [
+            { text: 'supply', link: '/projects/kinza-oral-supply' },
+            { text: 'borrow', link: '/projects/kinza-oral-borrow' },
+            { text: 'liquidation', link: '/projects/kinza-oral-liquidation' },
+          ]
+        },
+        {
+          text: 'Kinza Session 笔记',
+          items: [
+            { text: 'Session1 · 利率与指数', link: '/projects/kinza-session1-supply-利率指数' },
+            { text: 'Session1 · 结息与利率', link: '/projects/kinza-session1-supply-结息与利率' },
+            { text: 'Session2 · borrow', link: '/projects/kinza-session2-borrow' },
+            { text: 'Session3 · liquidation', link: '/projects/kinza-session3-liquidation' },
+          ]
         }
       ],
       '/foundry/': [
