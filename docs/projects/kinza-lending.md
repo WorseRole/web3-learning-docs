@@ -5,7 +5,7 @@
 > **Session1 手算**：[supply 利率与指数](./kinza-session1-supply-利率指数) · [结息、校验与三档利率](./kinza-session1-supply-结息与利率)  
 > **Session2 口播**：[borrow 主链路与 HF/LTV](./kinza-session2-borrow)  
 > **Session3 口播**：[liquidation 主链路与 Close Factor](./kinza-session3-liquidation)  
-> **白话详稿**：[supply](./kinza-oral-supply) · [borrow](./kinza-oral-borrow) · [liquidation](./kinza-oral-liquidation)
+> **白话详稿**：[supply](./kinza-oral-supply) · [borrow](./kinza-oral-borrow) · [liquidation](./kinza-oral-liquidation) · [Day D 代理](./kinza-oral-dayD-proxy)
 
 ## 项目背景
 

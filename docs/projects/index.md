@@ -17,6 +17,7 @@
 | supply | [kinza-oral-supply](./kinza-oral-supply) | [Session1 结息与利率](./kinza-session1-supply-结息与利率) |
 | borrow | [kinza-oral-borrow](./kinza-oral-borrow) | [Session2 borrow](./kinza-session2-borrow) |
 | liquidation | [kinza-oral-liquidation](./kinza-oral-liquidation) | [Session3 liquidation](./kinza-session3-liquidation) |
+| Day D 代理升级 | [kinza-oral-dayD-proxy](./kinza-oral-dayD-proxy) | 简历第 4 条 |
 | 总入口 | [简历 & 学习路径](./kinza-lending-简历与学习路径) | — |
 
 ## 简历一句话

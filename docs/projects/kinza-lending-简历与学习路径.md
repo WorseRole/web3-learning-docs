@@ -35,7 +35,7 @@ KZA 代币排放、Voter/Minter、Subgraph、LayerZero、自己改生产参数�
 |----|------|------|
 | Pool → Supply/Borrow → Logic 库 → aToken | 🟡 扫过 | 能画调用链，细节未闭卷 |
 | 多 Reserve（kBTC、USDC 等） | ✅ | 一个 Pool，每资产一条 Reserve |
-| 代理升级 | 🟡 | 知道换 impl；需能口述 `setPoolImpl` / `_updateImpl` |
+| 代理升级 | 🟡 | Day D 口播已过；再闭卷 30s vs UUPS |
 | GenericLogic / HF | 🟡 | Day B/C 已串进清算；面试前再闭卷默写 |
 | LiquidationLogic | 🟡 | Day C 口播+详稿已过；再练 1～2 遍闭卷 |
 | Scaled balance + index | ⬜ | 公式知道，未扣 `_mintScaled` |
@@ -169,6 +169,8 @@ HF = (总抵押_base × avgLiquidationThreshold) / 总债务_base
 
 ### Day D · 对齐简历第 4 条（Reserve + 升级）
 
+> 口播笔记：[kinza-oral-dayD-proxy](./kinza-oral-dayD-proxy) · 本地 txt：[dayD-proxy.txt](../web3/dayD-proxy.txt)
+
 | 顺序 | 读什么 | 关注什么 |
 |------|--------|----------|
 | 1 | `libraries/types/DataTypes.sol` → `ReserveData` | `liquidityIndex`、configuration 里 LTV/阈值 |
@@ -264,6 +266,7 @@ HF = (总抵押_base × avgLiquidationThreshold) / 总债务_base
 | Session2 borrow 口播 | [kinza-session2-borrow.md](./kinza-session2-borrow.md) |
 | Session3 liquidation 口播 | [kinza-session3-liquidation.md](./kinza-session3-liquidation.md) |
 | supply / borrow / 清算白话 | [oral-supply](./kinza-oral-supply) · [oral-borrow](./kinza-oral-borrow) · [oral-liquidation](./kinza-oral-liquidation) |
+| Day D 代理升级白话 | [kinza-oral-dayD-proxy](./kinza-oral-dayD-proxy) |
 | 永续对照 | [metanode-perpetual.md](./metanode-perpetual.md) |
 
-*创建：2026-10-20 · 更新：2026-11-18（Session3 liquidation 口播与详稿）· 配合简历双项目（MetaNode + Kinza）*
+*创建：2026-10-20 · 更新：2026-11-18（Day D 代理升级口播）· 配合简历双项目（MetaNode + Kinza）*

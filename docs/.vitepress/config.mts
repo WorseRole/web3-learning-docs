@@ -60,6 +60,7 @@ export default defineConfig({
             { text: 'supply', link: '/projects/kinza-oral-supply' },
             { text: 'borrow', link: '/projects/kinza-oral-borrow' },
             { text: 'liquidation', link: '/projects/kinza-oral-liquidation' },
+            { text: 'Day D · 代理升级', link: '/projects/kinza-oral-dayD-proxy' },
           ]
         },
         {
