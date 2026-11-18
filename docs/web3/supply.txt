@@ -1,6 +1,79 @@
-已迁到站点可读页（VitePress Projects / Kinza）：
+那我先说一下，supply
+也是先进行cache （将underlying的 reserve 从合约的storage 给转移到 memory 中）可以省gas
 
-  docs/projects/kinza-oral-supply.md
-  https://worserole.github.io/web3-learning-docs/projects/kinza-oral-supply.html
+然后再 updateState , 同区块已updateState 过就直接return；存款指数要 currLiquidityRate != 0，可变借款指数要池里已有可变债。
+主要是 对 nextLiquidityIndex 流动性指数 和 nextVariableBorrowIndex 可变债利率指数 进行改变
+nextLiquidityIndex = factor * curLiquidityIndex / RAY
+factor = RAY + (currLiquidityRate年化率 * (t2(为now) - t1(为上次更新时间)))/(365*24*60*60) 
 
-本文件保留作本地指针，正文以 md 为准。
+nextVariableBorrowIndex = factor * curVariableIndex
+factor = (1 + x)^n  x为可变债年化率 n为t2(为now) - t1(为上次更新时间))
+		= 展开二项式
+		= 1 + n*x + n(n-1)*x^2/2 + n(n-1)(n-2)*x^3/6 
+		因为可变债为复利计算 不像流动利率指数可以直接线性算出 这样来算出约等于的因子
+
+然后再算出总利息 
+通过 nextVariableBorrowIndex
+可变债的新增利息是 = 这次的可变债利率指数来算出 可变债务的总额  -  上次的旧的可变债利率指数 算出的 上次的可变债务的总额 
+稳定债务的新增利息就不能这么计算了
+因为 稳定债务每一个的利率都是固定的，不是可变的。 所以要用稳定债务的本金 * 累计稳定借款利息系数 的前提是要计算出这段时间的 累积稳定借款利息系数
+这个是用（1 + x）^n  x为平均的稳定债借款年化利率， n为计息时间（储备上次更新时间 - 稳定债务上次更新时间也就是借还时间） 
+也是展开二项式进行计算的
+	= 1 + n*x + n(n-1)*x^2/2 + n(n-1)(n-2)*x^3/6
+	算出稳定债这段时间的累积稳定借款利息系数
+然后用稳定债务的本金 * 累积稳定借款利息系数 得到距离稳定债务上次更新时间到储备上次更新时间的 稳定债务总金额
+当n为 （now - 稳定债务上次更新时间也就是借还时间）时 可以算出 curr的累积稳定借款利息系数
+然后用稳定债务的本金 * curr的累积稳定借款利息系数 算出 当前稳定债务总金额 
+再用 现在稳定债务总金额 - 之前的稳定债务总金额 就可以算出 稳定债务的利息
+
+
+算出 稳定债务的利息 和 可变债务的利息 相加就是总利息
+总利息 * 利息抽成 得到 要给金库转进去的金额
+进行记录下来，不立刻转账铸币，只是
+accruedToTreasury += (总利息 * reserveFactor)/nextLiquidityIndex (存的是 scaled)
+
+然后对这笔存入的交易进行校验，校验 uderlying市场是否开启，是否被禁用，用户是否可以操作，以及市场的上限是否超过，这个上限是根据 （用户的scaled总量 + 尚未铸的treasury的scaled）* 新的指数 /RAY+ 本次存入的underlying面值  看是否超过（市场的上限）
+
+
+再对三档年化利率进行更新
+三档年化分别是： 可变债务年化率、存款年化率、稳定报价
+三档新利率给下一笔用；本笔指数已用旧利率结完。
+
+先算可变债务年化率 和 稳定报价
+因为要判断借款利用率 和 拐点的关系，所以先要计算 借款利用率
+借款利用率 = 总债务/（可用现金 + 总债务）
+总债务 = 稳定债总债务 + 可变债总债务
+稳定债务利用率 = 稳定债总债务/总债务
+可用现金 = 合约中的资产underlying + 这次存款金额
+算出借款利用率后 用来判断与拐点的关系
+
+当借款利用率 <= 拐点时
+可变借款年化 = base + variableSlpoe1 * U/拐点
+稳定报价 = （variableSlope1 + 稳定加价） + stableSlope1 * U/拐点
+
+当借款利用率 > 拐点时
+可变借款年化 = base + variableSlope1 + variableSlope2 * excess（excess为 （U-拐点）/（1-拐点））
+稳定报价 = （variableSlope1 + 稳定加价） + stableSlope1 + stableSlope2 * excess
+
+再判断 稳定债务利用率 > 稳定债拐点 时
+excessStable = （稳定债务利用率 - 拐点）/ （1 - 拐点）
+稳定报价 += stableRateExcessOfferset * excessStable
+
+最后算出存款年化
+存款年化 = 整体借款年化 * 存款利用率（如果没有跨链存款的unbacked 就是借款利用率了） * （1-reserveFactor）
+整体借款 = （可变债务总额 * 新可变借款年化 + 稳定债务总额 * 平均稳定利率）/ 总债务
+
+得： 可变借款债务年化、稳定报价、存款年化 对此合约中进行更新
+
+
+然后进行 safeTransferFrom 将用户金额 转入 合约中
+
+最后再紧跟着给 用户铸币 mint aToken
+根据当前的index 算出给用户应该铸币多少
+根据 用户实际余额 = scaledBalance * index / RAY 推导出
+用户的 scaled = 这次的存款数额 * RAY / nextLiquidityIndex
+
+铸币的数量就时 scaled的值。 进行对用户进行铸币aToken 为 scaled 个
+
+
+最后 判断是否用户为第一次存款，如果是则需要看位图是否对这笔存款标记为 抵押
